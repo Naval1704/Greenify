@@ -10,7 +10,14 @@ class FamilyPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: Colors.green, // Green background color
+      decoration: const BoxDecoration(
+        // Gradient Background
+        gradient: LinearGradient(
+          colors: [Color(0xFF1EFF34), Color(0xFF47FF4B), Color(0xFF14FF00)],
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+        ),
+      ),
       child: Center(
         child: SizedBox(
           width: 281,

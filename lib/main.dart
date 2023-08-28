@@ -4,9 +4,7 @@ import 'package:greenify/start_page.dart';
 // Import your StartPage
 
 void main() {
-  
   runApp(const MyApp());
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -16,10 +14,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Your App Title',
+      title: 'Greenify',
       initialRoute: '/', // Set the initial route to '/'
       routes: {
-        '/': (context) => const StartPage(), // Map the root route to the StartPage
+        '/': (context) =>
+            const StartPage(), // Map the root route to the StartPage
         '/login': (context) => const LoginPage(), // Map the login route
         // Add more routes as needed
       },
