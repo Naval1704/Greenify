@@ -8,6 +8,7 @@ class FamilyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      
       width: double.infinity,
       height: double.infinity,
       decoration: const BoxDecoration(
@@ -40,6 +41,17 @@ class FamilyPage extends StatelessWidget {
                       ),
                     ],
                     color: const Color.fromRGBO(255, 255, 255, 1),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                right: -500,
+                bottom: -400,
+                child: Opacity(
+                  opacity: 0.8, // Adjust the opacity value as needed
+                  child: Image.asset(
+                    'assets/watermark.png', // Replace with your watermark image asset
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -198,6 +210,24 @@ class FamilyPage extends StatelessWidget {
                   width: 17,
                   height: 16,
                   decoration: const BoxDecoration(),
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                left: 90,
+                right: 90,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      'assets/google.png',
+                      width: 50,
+                    ),
+                    Image.asset(
+                      'assets/meta.png',
+                      width: 50,
+                    )
+                      ],
                 ),
               ),
             ],

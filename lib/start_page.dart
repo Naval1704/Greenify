@@ -36,7 +36,7 @@ class _StartPageState extends State<StartPage> {
           ),
           child: Center(
             child: Image.asset(
-              'assets/images/agriculture.png', // Replace with the actual asset path
+              'assets/agriculture.png', // Replace with the actual asset path
               width: 100.0, // Adjust the width as needed
               height: 100.0, // Adjust the height as needed
             ),
