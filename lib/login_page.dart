@@ -130,15 +130,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-// decoration: const BoxDecoration(
-// // Gradient Background
-// gradient: LinearGradient(
-// colors: [
-// Color(0xFF1EFF34),
-// Color(0xFF47FF4B),
-// Color(0xFF14FF00)
-// ],
-// begin: Alignment.bottomLeft,
-// end: Alignment.topRight,
-// ),
-// ),
