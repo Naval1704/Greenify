@@ -52,13 +52,14 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     primary: Colors.red, // Set the button color to red
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
                   ),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const FarmerPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const FarmerPage()),
                     );
                   },
                   child: const Text(
@@ -76,13 +77,14 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     primary: Colors.red, // Set the button color to red
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
                   ),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const FamilyPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const FamilyPage()),
                     );
                   },
                   child: const Text(
@@ -101,3 +103,15 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+// decoration: const BoxDecoration(
+// // Gradient Background
+// gradient: LinearGradient(
+// colors: [
+// Color(0xFF1EFF34),
+// Color(0xFF47FF4B),
+// Color(0xFF14FF00)
+// ],
+// begin: Alignment.bottomLeft,
+// end: Alignment.topRight,
+// ),
+// ),
