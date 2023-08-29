@@ -26,10 +26,21 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset(
-          'assets/images/agriculture.png', // Replace with the actual asset path
-          width: 100.0, // Adjust the width as needed
-          height: 100.0, // Adjust the height as needed
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1EFF34), Color(0xFF14FF00)],
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+            ),
+          ),
+          child: Center(
+            child: Image.asset(
+              'assets/agriculture.png', // Replace with the actual asset path
+              width: 100.0, // Adjust the width as needed
+              height: 100.0, // Adjust the height as needed
+            ),
+          ),
         ),
       ),
     );
