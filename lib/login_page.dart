@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(25),
                         ),
                         primary: Colors.red, // Set the button color to red
                         padding: const EdgeInsets.symmetric(
@@ -77,7 +77,7 @@ class LoginPage extends StatelessWidget {
                       );
                     },
                     child: const Text(
-                      'Farmer',
+                      '    Farmer    ',
                       style: TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -88,7 +88,7 @@ class LoginPage extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       primary: Colors.red, // Set the button color to red
                       padding: const EdgeInsets.symmetric(
@@ -102,7 +102,7 @@ class LoginPage extends StatelessWidget {
                       );
                     },
                     child: const Text(
-                      ' Family ',
+                      '     Family     ',
                       style: TextStyle(
                           fontSize: 18,
                           color: Colors.white,
