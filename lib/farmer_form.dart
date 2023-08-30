@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 
 class FarmerFormPage extends StatefulWidget {
@@ -10,8 +8,8 @@ class FarmerFormPage extends StatefulWidget {
 }
 
 class _FarmerFormPageState extends State<FarmerFormPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   void _submitForm() {
     // Implement your form submission logic here
@@ -24,7 +22,7 @@ class _FarmerFormPageState extends State<FarmerFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Farmer Form Page'),
+        title: Text('Farmer Form Page'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -34,22 +32,22 @@ class _FarmerFormPageState extends State<FarmerFormPage> {
           children: [
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Email or Username',
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             TextFormField(
               controller: _passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Password',
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitForm,
-              child: const Text('Submit'),
+              child: Text('Submit'),
             ),
           ],
         ),
