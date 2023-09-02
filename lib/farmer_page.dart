@@ -8,7 +8,6 @@ class FarmerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      
       width: double.infinity,
       height: double.infinity,
       decoration: const BoxDecoration(
@@ -227,7 +226,7 @@ class FarmerPage extends StatelessWidget {
                       'assets/meta.png',
                       width: 50,
                     )
-                      ],
+                  ],
                 ),
               ),
             ],

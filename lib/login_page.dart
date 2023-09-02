@@ -9,20 +9,9 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(title: Text('Login')),
-      backgroundColor: Colors.green,
+      // backgroundColor: Colors.green,
       body: Stack(
         children: [
-          // Positioned(
-          //   right: -500,
-          //   bottom: -400,
-          //   child: Opacity(
-          //     opacity: 0.9, // Adjust opacity as needed
-          //     child: Image.asset(
-          //       'assets/watermark.png', // Replace with your watermark image path
-          //       width: 950, // Adjust width as needed
-          //     ),
-          //   ),
-          // ),
           Container(
             decoration: const BoxDecoration(
               // Gradient Background
@@ -110,14 +99,14 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Positioned(
+                  Positioned.fill(
                     right: -500,
                     bottom: -400,
                     child: Opacity(
                       opacity: 0.9, // Adjust opacity as needed
                       child: Image.asset(
                         'assets/watermark.png', // Replace with your watermark image path
-                        width: 950, // Adjust width as needed
+                        fit: BoxFit.cover, // Adjust width as needed
                       ),
                     ),
                   ),
