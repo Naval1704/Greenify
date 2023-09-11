@@ -20,6 +20,71 @@ class FarmerPage extends StatelessWidget {
           end: Alignment.topRight,
         ),
       ),
+      child: Stack(
+        children: [
+          // Background Image for Login Page
+          Positioned.fill(
+                right: -500,
+                bottom: -400,
+                child: Opacity(
+                  opacity: 0.8, // Adjust the opacity value as needed
+                  child: Image.asset(
+                    'assets/watermark.png', // Replace with your watermark image asset
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Card widget
+              const SizedBox(height: 150),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Card(
+                    // White card for login content
+                    color: Colors.white, // Set card color to white
+                    elevation: 20.0, // Add shadow to the card (optional)
+                    margin: const EdgeInsets.all(10.0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            25.0)), // Add margin around the card
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 300.0,
+                        minHeight: 460.0,
+                      ),
+                ),
+                ),
+                const Positioned(
+                  top: 167,
+                  left: 39,
+                  child: Divider(
+                    color: Color.fromRGBO(0, 0, 0, 1),
+                    thickness: 1,
+                  ),
+                  ),
+                    ),
+                    ),
+                    Image.asset(
+                      'assets/meta.png',
+                      width: 50,
+                    )
+                  ],
+=======
+    return Material(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          // Gradient Background
+          gradient: LinearGradient(
+            colors: [Color(0xFF1EFF34), Color(0xFF47FF4B), Color(0xFF14FF00)],
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+          ),
+        ),
       child: Center(
         child: SizedBox(
           width: 281,
