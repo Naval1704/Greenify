@@ -554,11 +554,6 @@ class FarmerPage extends StatelessWidget {
             )
           ],
         ),
-//         child: Center(
-//           child: SizedBox(
-
-//           ),
-//         ),
       ),
     );
   }
