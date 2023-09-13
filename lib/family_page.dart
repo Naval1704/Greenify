@@ -85,8 +85,8 @@ class FamilyPage extends StatelessWidget {
                   ),
                   Positioned(
                     bottom:
-                        130, // Adjust these values to position the button as desired
-                    left: 53,
+                        155, // Adjust these values to position the button as desired
+                    left: 47,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -94,7 +94,7 @@ class FamilyPage extends StatelessWidget {
                         ),
                         primary: Colors.red,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 70, vertical: 16),
+                            horizontal: 75, vertical: 16),
                         shadowColor: Colors.black,
                       ),
                       onPressed: () {
@@ -153,11 +153,11 @@ class FamilyPage extends StatelessWidget {
                       width: 200, // Adjust as needed
                       child: TextFormField(
                         decoration: const InputDecoration(
-                          hintText: 'Enter email or username',
+                          hintText: 'Phone Number',
                           hintStyle: TextStyle(
                             color: Color.fromRGBO(129, 129, 129, 1),
                             fontFamily: 'Aclonica',
-                            fontSize: 10,
+                            fontSize: 12,
                             letterSpacing: 0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -182,11 +182,11 @@ class FamilyPage extends StatelessWidget {
                         obscureText:
                             true, // Hides the input characters for password
                         decoration: const InputDecoration(
-                          hintText: 'Password',
+                          hintText: 'OTP',
                           hintStyle: TextStyle(
                             color: Color.fromRGBO(129, 129, 129, 1),
                             fontFamily: 'Aclonica',
-                            fontSize: 10,
+                            fontSize: 12,
                             letterSpacing: 0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -203,15 +203,31 @@ class FamilyPage extends StatelessWidget {
                     ),
                   ),
                   const Positioned(
-                    top: 212,
-                    left: 147,
+                    top: 173,
+                    left: 200,
                     child: Text(
-                      'Forgot Password ?',
+                      'Get OTP',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         color: Color.fromRGBO(129, 129, 129, 1),
                         fontFamily: 'Aclonica',
-                        fontSize: 10,
+                        fontSize: 11,
+                        letterSpacing: 0,
+                        fontWeight: FontWeight.bold,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    top: 320,
+                    left: 110,
+                    child: Text(
+                      '------ Or ------',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color.fromRGBO(129, 129, 129, 1),
+                        fontFamily: 'Aclonica',
+                        fontSize: 11,
                         letterSpacing: 0,
                         fontWeight: FontWeight.bold,
                         height: 1,
