@@ -3,11 +3,20 @@
 import 'package:flutter/material.dart';
 import 'package:greenify/family_form.dart';
 
-class FamilyPage extends StatelessWidget {
+class FamilyPage extends StatefulWidget {
+  FamilyPage({Key? key}) : super(key: key);
+
+  @override
+  _FamilyPageState createState() => _FamilyPageState();
+}
+
+class _FamilyPageState extends State<FamilyPage> {
   bool isLoginSelected = true;
-  FamilyPage({super.key});
+
   void toggleLoginSignup() {
-    isLoginSelected = !isLoginSelected;
+    setState(() {
+      isLoginSelected = !isLoginSelected;
+    });
   }
 
   @override
@@ -74,13 +83,12 @@ class FamilyPage extends StatelessWidget {
                           onPressed: () {
                             if (!isLoginSelected) {
                               toggleLoginSignup();
+                              // isLoginSelected = !isLoginSelected;
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            primary:
-                                isLoginSelected ? Colors.red : Colors.white,
-                            onPrimary:
-                                isLoginSelected ? Colors.white : Colors.red,
+                            foregroundColor: isLoginSelected ? Colors.white: Colors.red, 
+                            backgroundColor: isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -93,7 +101,7 @@ class FamilyPage extends StatelessWidget {
                               fontFamily: 'Aclonica',
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              
                             ),
                           ),
                         ),
@@ -101,13 +109,12 @@ class FamilyPage extends StatelessWidget {
                           onPressed: () {
                             if (isLoginSelected) {
                               toggleLoginSignup();
+                              // isLoginSelected = !isLoginSelected;
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            primary:
-                                isLoginSelected ? Colors.white : Colors.red,
-                            onPrimary:
-                                isLoginSelected ? Colors.red : Colors.white,
+                            foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
+                            backgroundColor: isLoginSelected ? Colors.white : Colors.red,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -151,8 +158,7 @@ class LoginContent extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
-                ),
-                primary: Colors.red,
+                ), backgroundColor: Colors.red,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
                 shadowColor: Colors.black,
@@ -166,6 +172,136 @@ class LoginContent extends StatelessWidget {
               },
               child: const Text(
                 'Login',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Aclonica'),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 100, // Adjust as needed
+            left: 47,
+            child: Container(
+              width: 200, // Adjust as needed
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Phone Number',
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(129, 129, 129, 1),
+                    fontFamily: 'Aclonica',
+                    fontSize: 12,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.black), // Adjust as needed
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.red), // Adjust as needed
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          
+          const Positioned(
+            top: 320,
+            left: 110,
+            child: Text(
+              '------ Or ------',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Color.fromRGBO(129, 129, 129, 1),
+                fontFamily: 'Aclonica',
+                fontSize: 11,
+                letterSpacing: 0,
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 131,
+            left: 40,
+            child: Divider(
+              color: Color.fromRGBO(0, 0, 0, 1),
+              thickness: 1,
+            ),
+          ),
+          const Positioned(
+            top: 167,
+            left: 39,
+            child: Divider(
+              color: Color.fromRGBO(0, 0, 0, 1),
+              thickness: 1,
+            ),
+          ),
+          Positioned(
+            top: 148,
+            left: 233,
+            child: Container(
+              width: 17,
+              height: 16,
+              decoration: const BoxDecoration(),
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 90,
+            right: 90,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(
+                  'assets/google.png',
+                  width: 50,
+                ),
+                Image.asset(
+                  'assets/meta.png',
+                  width: 50,
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SignupContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom:
+                155, // Adjust these values to position the button as desired
+            left: 47,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ), backgroundColor: Colors.red,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
+                shadowColor: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FamilyFormPage()),
+                );
+              },
+              child: const Text(
+                'Sign Up',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -304,19 +440,6 @@ class LoginContent extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class SignupContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Material(
-      child: Stack(
-        children: <Widget>[
-          Text('SignUp Content'),
         ],
       ),
     );

@@ -61,8 +61,7 @@ class LoginPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const FarmerPage()),
+                        MaterialPageRoute(builder: (context) => FarmerPage()),
                       );
                     },
                     child: const Text(
