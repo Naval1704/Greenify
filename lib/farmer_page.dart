@@ -87,8 +87,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.white: Colors.red, 
-                            backgroundColor: isLoginSelected ? Colors.red : Colors.white,
+                            foregroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
+                            backgroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -101,7 +103,6 @@ class _FarmerPageState extends State<FarmerPage> {
                               fontFamily: 'Aclonica',
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              
                             ),
                           ),
                         ),
@@ -113,8 +114,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
-                            backgroundColor: isLoginSelected ? Colors.white : Colors.red,
+                            foregroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
+                            backgroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -158,7 +161,8 @@ class LoginContent extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
-                ), backgroundColor: Colors.red,
+                ),
+                backgroundColor: Colors.red,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
                 shadowColor: Colors.black,
@@ -207,8 +211,6 @@ class LoginContent extends StatelessWidget {
               ),
             ),
           ),
-          
-          
           const Positioned(
             top: 320,
             left: 110,
@@ -288,9 +290,10 @@ class SignupContent extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
-                ), backgroundColor: Colors.red,
+                ),
+                backgroundColor: Colors.red,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
+                    const EdgeInsets.symmetric(horizontal: 65, vertical: 16),
                 shadowColor: Colors.black,
               ),
               onPressed: () {
