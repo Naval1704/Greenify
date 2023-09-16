@@ -18,6 +18,12 @@ class _FarmerPageState extends State<FarmerPage> {
       isLoginSelected = !isLoginSelected;
     });
   }
+class FarmerPage extends StatelessWidget {
+  bool isLoginSelected = true;
+  FarmerPage({super.key});
+  void toggleLoginSignup() {
+    isLoginSelected = !isLoginSelected;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +121,65 @@ class _FarmerPageState extends State<FarmerPage> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
                             backgroundColor: isLoginSelected ? Colors.white : Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 10),
+                          ),
+                          child: const Text(
+                            "Signup",
+                            style: TextStyle(
+                              fontFamily: 'Aclonica',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    top: 20, // Adjust as needed
+                    left: 30,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ElevatedButton(
+                          onPressed: () {
+                            if (!isLoginSelected) {
+                              toggleLoginSignup();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary:
+                                isLoginSelected ? Colors.red : Colors.white,
+                            onPrimary:
+                                isLoginSelected ? Colors.white : Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 10),
+                          ),
+                          child: const Text(
+                            "Login",
+                            style: TextStyle(
+                              fontFamily: 'Aclonica',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (isLoginSelected) {
+                              toggleLoginSignup();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary:
+                                isLoginSelected ? Colors.white : Colors.red,
+                            onPrimary:
+                                isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -440,6 +505,198 @@ class SignupContent extends StatelessWidget {
               ],
             ),
           ),
+        ],
+                  isLoginSelected ? LoginContent() : SignupContent(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoginContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom:
+                155, // Adjust these values to position the button as desired
+            left: 47,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                primary: Colors.red,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
+                shadowColor: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FarmerFormPage()),
+                );
+              },
+              child: const Text(
+                'Login',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Aclonica'),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 100, // Adjust as needed
+            left: 47,
+            child: Container(
+              width: 200, // Adjust as needed
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Phone Number',
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(129, 129, 129, 1),
+                    fontFamily: 'Aclonica',
+                    fontSize: 12,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.black), // Adjust as needed
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.red), // Adjust as needed
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 151, // Adjust as needed
+            left: 47,
+            child: Container(
+              width: 200, // Adjust as needed
+              child: TextFormField(
+                obscureText: true, // Hides the input characters for password
+                decoration: const InputDecoration(
+                  hintText: 'OTP',
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(129, 129, 129, 1),
+                    fontFamily: 'Aclonica',
+                    fontSize: 12,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.black), // Adjust as needed
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.red), // Adjust as needed
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 173,
+            left: 200,
+            child: Text(
+              'Get OTP',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Color.fromRGBO(129, 129, 129, 1),
+                fontFamily: 'Aclonica',
+                fontSize: 11,
+                letterSpacing: 0,
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 320,
+            left: 110,
+            child: Text(
+              '------ Or ------',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Color.fromRGBO(129, 129, 129, 1),
+                fontFamily: 'Aclonica',
+                fontSize: 11,
+                letterSpacing: 0,
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 131,
+            left: 40,
+            child: Divider(
+              color: Color.fromRGBO(0, 0, 0, 1),
+              thickness: 1,
+            ),
+          ),
+          const Positioned(
+            top: 167,
+            left: 39,
+            child: Divider(
+              color: Color.fromRGBO(0, 0, 0, 1),
+              thickness: 1,
+            ),
+          ),
+          Positioned(
+            top: 148,
+            left: 233,
+            child: Container(
+              width: 17,
+              height: 16,
+              decoration: const BoxDecoration(),
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 90,
+            right: 90,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(
+                  'assets/google.png',
+                  width: 50,
+                ),
+                Image.asset(
+                  'assets/meta.png',
+                  width: 50,
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SignupContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Material(
+      child: Stack(
+        children: <Widget>[
+          Text('SignUp Content'),
         ],
       ),
     );
