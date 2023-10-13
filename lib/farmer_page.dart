@@ -88,10 +88,8 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                isLoginSelected ? Colors.white : Colors.red,
-                            backgroundColor:
-                                isLoginSelected ? Colors.red : Colors.white,
+                            foregroundColor: isLoginSelected ? Colors.white: Colors.red, 
+                            backgroundColor: isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -115,10 +113,8 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                isLoginSelected ? Colors.red : Colors.white,
-                            backgroundColor:
-                                isLoginSelected ? Colors.white : Colors.red,
+                            foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
+                            backgroundColor: isLoginSelected ? Colors.white : Colors.red,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
