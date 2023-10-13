@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-greenify-dev-133643-authRole",
+      "UnauthRoleArn": "arn:aws:iam::972451105760:role/amplify-greenify-dev-133643-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::972451105760:role/amplify-greenify-dev-133643-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-greenify-dev-133643-deployment",
+      "UnauthRoleName": "amplify-greenify-dev-133643-unauthRole",
+      "StackName": "amplify-greenify-dev-133643",
+      "StackId": "arn:aws:cloudformation:ap-south-1:972451105760:stack/amplify-greenify-dev-133643/741d4690-64e8-11ee-ac1b-02af78724bbc",
+      "AmplifyAppId": "dps2ra5ds614r"
+    },
+    "categories": {
+      "auth": {
+        "greenify985595d6": {}
+      }
+    }
+  }
+}

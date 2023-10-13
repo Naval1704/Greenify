@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:greenify/farmer_form.dart';
 
@@ -87,8 +88,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.white: Colors.red, 
-                            backgroundColor: isLoginSelected ? Colors.red : Colors.white,
+                            foregroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
+                            backgroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -101,7 +104,6 @@ class _FarmerPageState extends State<FarmerPage> {
                               fontFamily: 'Aclonica',
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              
                             ),
                           ),
                         ),
@@ -113,8 +115,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
-                            backgroundColor: isLoginSelected ? Colors.white : Colors.red,
+                            foregroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
+                            backgroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -144,303 +148,335 @@ class _FarmerPageState extends State<FarmerPage> {
   }
 }
 
+// class LoginContent extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Stack(
+//         children: <Widget>[
+//           Positioned(
+//             bottom:
+//                 155, // Adjust these values to position the button as desired
+//             left: 47,
+//             child: ElevatedButton(
+//               style: ElevatedButton.styleFrom(
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(30),
+//                 ), backgroundColor: Colors.red,
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
+//                 shadowColor: Colors.black,
+//               ),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: (context) => const FarmerFormPage()),
+//                 );
+//               },
+//               child: const Text(
+//                 'Login',
+//                 style: TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.white,
+//                     fontFamily: 'Aclonica'),
+//               ),
+//             ),
+//           ),
+//           Positioned(
+//             top: 100, // Adjust as needed
+//             left: 47,
+//             child: Container(
+//               width: 200, // Adjust as needed
+//               child: TextFormField(
+//                 decoration: const InputDecoration(
+//                   hintText: 'Phone Number',
+//                   hintStyle: TextStyle(
+//                     color: Color.fromRGBO(129, 129, 129, 1),
+//                     fontFamily: 'Aclonica',
+//                     fontSize: 12,
+//                     letterSpacing: 0,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                   enabledBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.black), // Adjust as needed
+//                   ),
+//                   focusedBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.red), // Adjust as needed
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+
+//           const Positioned(
+//             top: 320,
+//             left: 110,
+//             child: Text(
+//               '------ Or ------',
+//               textAlign: TextAlign.left,
+//               style: TextStyle(
+//                 color: Color.fromRGBO(129, 129, 129, 1),
+//                 fontFamily: 'Aclonica',
+//                 fontSize: 11,
+//                 letterSpacing: 0,
+//                 fontWeight: FontWeight.bold,
+//                 height: 1,
+//               ),
+//             ),
+//           ),
+//           const Positioned(
+//             top: 131,
+//             left: 40,
+//             child: Divider(
+//               color: Color.fromRGBO(0, 0, 0, 1),
+//               thickness: 1,
+//             ),
+//           ),
+//           const Positioned(
+//             top: 167,
+//             left: 39,
+//             child: Divider(
+//               color: Color.fromRGBO(0, 0, 0, 1),
+//               thickness: 1,
+//             ),
+//           ),
+//           Positioned(
+//             top: 148,
+//             left: 233,
+//             child: Container(
+//               width: 17,
+//               height: 16,
+//               decoration: const BoxDecoration(),
+//             ),
+//           ),
+//           Positioned(
+//             bottom: 40,
+//             left: 90,
+//             right: 90,
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Image.asset(
+//                   'assets/google.png',
+//                   width: 50,
+//                 ),
+//                 Image.asset(
+//                   'assets/meta.png',
+//                   width: 50,
+//                 )
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 class LoginContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            bottom:
-                155, // Adjust these values to position the button as desired
-            left: 47,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ), backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
-                shadowColor: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const FarmerFormPage()),
-                );
-              },
-              child: const Text(
-                'Login',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'Aclonica'),
-              ),
-            ),
+    return Authenticator(
+      initialStep: AuthenticatorStep.signIn,
+      child: MaterialApp(
+        builder: Authenticator.builder(),
+        home: const Scaffold(
+          body: Center(
+            child: Text('You are logged in!'),
           ),
-          Positioned(
-            top: 100, // Adjust as needed
-            left: 47,
-            child: Container(
-              width: 200, // Adjust as needed
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Phone Number',
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(129, 129, 129, 1),
-                    fontFamily: 'Aclonica',
-                    fontSize: 12,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.black), // Adjust as needed
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.red), // Adjust as needed
-                  ),
-                ),
-              ),
-            ),
-          ),
-          
-          
-          const Positioned(
-            top: 320,
-            left: 110,
-            child: Text(
-              '------ Or ------',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Color.fromRGBO(129, 129, 129, 1),
-                fontFamily: 'Aclonica',
-                fontSize: 11,
-                letterSpacing: 0,
-                fontWeight: FontWeight.bold,
-                height: 1,
-              ),
-            ),
-          ),
-          const Positioned(
-            top: 131,
-            left: 40,
-            child: Divider(
-              color: Color.fromRGBO(0, 0, 0, 1),
-              thickness: 1,
-            ),
-          ),
-          const Positioned(
-            top: 167,
-            left: 39,
-            child: Divider(
-              color: Color.fromRGBO(0, 0, 0, 1),
-              thickness: 1,
-            ),
-          ),
-          Positioned(
-            top: 148,
-            left: 233,
-            child: Container(
-              width: 17,
-              height: 16,
-              decoration: const BoxDecoration(),
-            ),
-          ),
-          Positioned(
-            bottom: 40,
-            left: 90,
-            right: 90,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.asset(
-                  'assets/google.png',
-                  width: 50,
-                ),
-                Image.asset(
-                  'assets/meta.png',
-                  width: 50,
-                )
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
+// class SignupContent extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Stack(
+//         children: <Widget>[
+//           Positioned(
+//             bottom:
+//                 155, // Adjust these values to position the button as desired
+//             left: 47,
+//             child: ElevatedButton(
+//               style: ElevatedButton.styleFrom(
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(30),
+//                 ), backgroundColor: Colors.red,
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
+//                 shadowColor: Colors.black,
+//               ),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: (context) => const FarmerFormPage()),
+//                 );
+//               },
+//               child: const Text(
+//                 'Sign Up',
+//                 style: TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.white,
+//                     fontFamily: 'Aclonica'),
+//               ),
+//             ),
+//           ),
+//           Positioned(
+//             top: 100, // Adjust as needed
+//             left: 47,
+//             child: Container(
+//               width: 200, // Adjust as needed
+//               child: TextFormField(
+//                 decoration: const InputDecoration(
+//                   hintText: 'Phone Number',
+//                   hintStyle: TextStyle(
+//                     color: Color.fromRGBO(129, 129, 129, 1),
+//                     fontFamily: 'Aclonica',
+//                     fontSize: 12,
+//                     letterSpacing: 0,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                   enabledBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.black), // Adjust as needed
+//                   ),
+//                   focusedBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.red), // Adjust as needed
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//           Positioned(
+//             top: 151, // Adjust as needed
+//             left: 47,
+//             child: Container(
+//               width: 200, // Adjust as needed
+//               child: TextFormField(
+//                 obscureText: true, // Hides the input characters for password
+//                 decoration: const InputDecoration(
+//                   hintText: 'OTP',
+//                   hintStyle: TextStyle(
+//                     color: Color.fromRGBO(129, 129, 129, 1),
+//                     fontFamily: 'Aclonica',
+//                     fontSize: 12,
+//                     letterSpacing: 0,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                   enabledBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.black), // Adjust as needed
+//                   ),
+//                   focusedBorder: UnderlineInputBorder(
+//                     borderSide:
+//                         BorderSide(color: Colors.red), // Adjust as needed
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//           const Positioned(
+//             top: 173,
+//             left: 200,
+//             child: Text(
+//               'Get OTP',
+//               textAlign: TextAlign.left,
+//               style: TextStyle(
+//                 color: Color.fromRGBO(129, 129, 129, 1),
+//                 fontFamily: 'Aclonica',
+//                 fontSize: 11,
+//                 letterSpacing: 0,
+//                 fontWeight: FontWeight.bold,
+//                 height: 1,
+//               ),
+//             ),
+//           ),
+//           const Positioned(
+//             top: 320,
+//             left: 110,
+//             child: Text(
+//               '------ Or ------',
+//               textAlign: TextAlign.left,
+//               style: TextStyle(
+//                 color: Color.fromRGBO(129, 129, 129, 1),
+//                 fontFamily: 'Aclonica',
+//                 fontSize: 11,
+//                 letterSpacing: 0,
+//                 fontWeight: FontWeight.bold,
+//                 height: 1,
+//               ),
+//             ),
+//           ),
+//           const Positioned(
+//             top: 131,
+//             left: 40,
+//             child: Divider(
+//               color: Color.fromRGBO(0, 0, 0, 1),
+//               thickness: 1,
+//             ),
+//           ),
+//           const Positioned(
+//             top: 167,
+//             left: 39,
+//             child: Divider(
+//               color: Color.fromRGBO(0, 0, 0, 1),
+//               thickness: 1,
+//             ),
+//           ),
+//           Positioned(
+//             top: 148,
+//             left: 233,
+//             child: Container(
+//               width: 17,
+//               height: 16,
+//               decoration: const BoxDecoration(),
+//             ),
+//           ),
+//           Positioned(
+//             bottom: 40,
+//             left: 90,
+//             right: 90,
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Image.asset(
+//                   'assets/google.png',
+//                   width: 50,
+//                 ),
+//                 Image.asset(
+//                   'assets/meta.png',
+//                   width: 50,
+//                 )
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// ignore: non_constant_identifier_names
 class SignupContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            bottom:
-                155, // Adjust these values to position the button as desired
-            left: 47,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ), backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
-                shadowColor: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const FarmerFormPage()),
-                );
-              },
-              child: const Text(
-                'Sign Up',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'Aclonica'),
-              ),
-            ),
+    return Authenticator(
+      initialStep: AuthenticatorStep.signUp,
+      child: MaterialApp(
+        builder: Authenticator.builder(),
+        home: const Scaffold(
+          body: Center(
+            child: Text('You are logged in!'),
           ),
-          Positioned(
-            top: 100, // Adjust as needed
-            left: 47,
-            child: Container(
-              width: 200, // Adjust as needed
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Phone Number',
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(129, 129, 129, 1),
-                    fontFamily: 'Aclonica',
-                    fontSize: 12,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.black), // Adjust as needed
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.red), // Adjust as needed
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 151, // Adjust as needed
-            left: 47,
-            child: Container(
-              width: 200, // Adjust as needed
-              child: TextFormField(
-                obscureText: true, // Hides the input characters for password
-                decoration: const InputDecoration(
-                  hintText: 'OTP',
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(129, 129, 129, 1),
-                    fontFamily: 'Aclonica',
-                    fontSize: 12,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.black), // Adjust as needed
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.red), // Adjust as needed
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const Positioned(
-            top: 173,
-            left: 200,
-            child: Text(
-              'Get OTP',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Color.fromRGBO(129, 129, 129, 1),
-                fontFamily: 'Aclonica',
-                fontSize: 11,
-                letterSpacing: 0,
-                fontWeight: FontWeight.bold,
-                height: 1,
-              ),
-            ),
-          ),
-          const Positioned(
-            top: 320,
-            left: 110,
-            child: Text(
-              '------ Or ------',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Color.fromRGBO(129, 129, 129, 1),
-                fontFamily: 'Aclonica',
-                fontSize: 11,
-                letterSpacing: 0,
-                fontWeight: FontWeight.bold,
-                height: 1,
-              ),
-            ),
-          ),
-          const Positioned(
-            top: 131,
-            left: 40,
-            child: Divider(
-              color: Color.fromRGBO(0, 0, 0, 1),
-              thickness: 1,
-            ),
-          ),
-          const Positioned(
-            top: 167,
-            left: 39,
-            child: Divider(
-              color: Color.fromRGBO(0, 0, 0, 1),
-              thickness: 1,
-            ),
-          ),
-          Positioned(
-            top: 148,
-            left: 233,
-            child: Container(
-              width: 17,
-              height: 16,
-              decoration: const BoxDecoration(),
-            ),
-          ),
-          Positioned(
-            bottom: 40,
-            left: 90,
-            right: 90,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.asset(
-                  'assets/google.png',
-                  width: 50,
-                ),
-                Image.asset(
-                  'assets/meta.png',
-                  width: 50,
-                )
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

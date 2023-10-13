@@ -20,6 +20,8 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
+  flutter: ">=3.3.0"
+
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,6 +33,10 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.3  # Add this line
+
+  amplify_flutter: ^1.0.0
+  amplify_auth_cognito: ^1.0.0
+  amplify_authenticator: ^1.0.0
 
 
 
