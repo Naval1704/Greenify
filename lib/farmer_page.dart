@@ -1,8 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
-import 'package:greenify/farmer_form.dart';
+import 'package:greenify/lobby_page.dart';
 
 class FarmerPage extends StatefulWidget {
   FarmerPage({Key? key}) : super(key: key);
@@ -88,8 +87,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.white: Colors.red, 
-                            backgroundColor: isLoginSelected ? Colors.red : Colors.white,
+                            foregroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
+                            backgroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -113,8 +114,10 @@ class _FarmerPageState extends State<FarmerPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: isLoginSelected ? Colors.red : Colors.white, 
-                            backgroundColor: isLoginSelected ? Colors.white : Colors.red,
+                            foregroundColor:
+                                isLoginSelected ? Colors.red : Colors.white,
+                            backgroundColor:
+                                isLoginSelected ? Colors.white : Colors.red,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -144,6 +147,7 @@ class _FarmerPageState extends State<FarmerPage> {
   }
 }
 
+//
 // class LoginContent extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -158,7 +162,8 @@ class _FarmerPageState extends State<FarmerPage> {
 //               style: ElevatedButton.styleFrom(
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(30),
-//                 ), backgroundColor: Colors.red,
+//                 ),
+//                 backgroundColor: Colors.red,
 //                 padding:
 //                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
 //                 shadowColor: Colors.black,
@@ -207,7 +212,6 @@ class _FarmerPageState extends State<FarmerPage> {
 //               ),
 //             ),
 //           ),
-
 //           const Positioned(
 //             top: 320,
 //             left: 110,
@@ -278,10 +282,18 @@ class LoginContent extends StatelessWidget {
     return Authenticator(
       initialStep: AuthenticatorStep.signIn,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         builder: Authenticator.builder(),
-        home: const Scaffold(
+        home: Scaffold(
           body: Center(
-            child: Text('You are logged in!'),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LobbyPage()),
+                );
+              },
+              child: const Text('Log In'),
+            ),
           ),
         ),
       ),
@@ -289,6 +301,7 @@ class LoginContent extends StatelessWidget {
   }
 }
 
+//
 // class SignupContent extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -303,7 +316,8 @@ class LoginContent extends StatelessWidget {
 //               style: ElevatedButton.styleFrom(
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(30),
-//                 ), backgroundColor: Colors.red,
+//                 ),
+//                 backgroundColor: Colors.red,
 //                 padding:
 //                     const EdgeInsets.symmetric(horizontal: 75, vertical: 16),
 //                 shadowColor: Colors.black,
@@ -461,12 +475,14 @@ class LoginContent extends StatelessWidget {
 //   }
 // }
 // ignore: non_constant_identifier_names
+
 class SignupContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Authenticator(
       initialStep: AuthenticatorStep.signUp,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         builder: Authenticator.builder(),
         home: const Scaffold(
           body: Center(

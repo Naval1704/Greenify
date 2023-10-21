@@ -276,6 +276,24 @@ class LoginContent extends StatelessWidget {
   }
 }
 
+// class LoginContent extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Authenticator(
+//       initialStep: AuthenticatorStep.signIn,
+//       child: MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         builder: Authenticator.builder(),
+//         home: const Scaffold(
+//           body: Center(
+//             child: Text('You are logged in!'),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class SignupContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
