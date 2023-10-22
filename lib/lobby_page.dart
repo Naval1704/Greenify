@@ -3,8 +3,16 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'farmer_page.dart';
 
-class LobbyPage extends StatelessWidget {
-  const LobbyPage({Key? key});
+class LobbyPage extends StatefulWidget {
+  const LobbyPage({Key? key}) : super(key: key);
+
+  @override
+  _LobbyPageState createState() => _LobbyPageState();
+}
+
+class _LobbyPageState extends State<LobbyPage> {
+  int currentPageIndex = 0;
+
   Future<void> _handleSignout(BuildContext context) async {
     try {
       await Amplify.Auth.signOut(); // Sign the user out from all devices
@@ -20,41 +28,64 @@ class LobbyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
+      
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentPageIndex,
+        onTap: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Business',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'School',
+          ),
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Welcome to Your App!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: DefaultTabController(
+        initialIndex: 1,
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('TabBar Sample'),
+            bottom: TabBar(
+              tabs: <Widget>[
+                Tab(
+                  icon: Icon(Icons.cloud_outlined),
+                ),
+                Tab(
+                  icon: Icon(Icons.beach_access_sharp),
+                ),
+                Tab(
+                  icon: Icon(Icons.brightness_5_sharp),
+                ),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              // Add your tab content here
+              // For example:
+              Center(
+                child: Text('Tab 1 Content'),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'This is your home page.',
-              style: TextStyle(
-                fontSize: 16,
+              Center(
+                child: Text('Tab 2 Content'),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add your button's functionality here
-              },
-              child: const Text('Click Me'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await _handleSignout(context); // Call the signout function
-              },
-              child: const Text('Signout'),
-            ),
-          ],
+              Center(
+                child: Text('Tab 3 Content'),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:greenify/family_form.dart';
+import 'package:greenify/lobby_page.dart';
 
 class FamilyPage extends StatefulWidget {
   FamilyPage({Key? key}) : super(key: key);
@@ -171,7 +172,7 @@ class LoginContent extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const FamilyFormPage()),
+                      builder: (context) => const LobbyPage()),
                 );
               },
               child: const Text(
