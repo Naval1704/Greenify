@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'farmer_page.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -12,80 +9,130 @@ class LobbyPage extends StatefulWidget {
 
 class _LobbyPageState extends State<LobbyPage> {
   int currentPageIndex = 0;
-
-  Future<void> _handleSignout(BuildContext context) async {
-    try {
-      await Amplify.Auth.signOut(); // Sign the user out from all devices
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => FarmerPage()),
-      );
-    } on AuthException catch (e) {
-      print("Error signing out: ${e.message}");
-      // Handle error, show a message, or navigate to an error screen if needed
-    }
-  }
+  final List<Tab> tabs = [
+    Tab(text: 'Home'),
+    Tab(text: 'Crop Doctor'),
+    Tab(text: 'Tasks'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentPageIndex,
-        onTap: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-      ),
-      body: DefaultTabController(
-        initialIndex: 1,
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('TabBar Sample'),
-            bottom: TabBar(
-              tabs: <Widget>[
-                Tab(
-                  icon: Icon(Icons.cloud_outlined),
-                ),
-                Tab(
-                  icon: Icon(Icons.beach_access_sharp),
-                ),
-                Tab(
-                  icon: Icon(Icons.brightness_5_sharp),
-                ),
-              ],
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 60,
+          automaticallyImplyLeading: false,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1EFF34),
+                  Color(0xFF47FF4B),
+                  Color(0xFF14FF00),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.topCenter,
+              ),
             ),
           ),
-          body: TabBarView(
-            children: <Widget>[
-              // Add your tab content here
-              // For example:
-              Center(
-                child: Text('Tab 1 Content'),
+          title: Row(
+            children: [
+              IconButton(
+                iconSize: 40,
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  // Handle Account button press
+                },
               ),
-              Center(
-                child: Text('Tab 2 Content'),
-              ),
-              Center(
-                child: Text('Tab 3 Content'),
+              const Text(
+                'Greenify',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                ),
               ),
             ],
           ),
+          actions: <Widget>[
+            IconButton(
+              iconSize: 30,
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                // Handle Notification button press
+              },
+            ),
+            IconButton(
+              iconSize: 30,
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                // Handle Cart button press
+              },
+            ),
+          ],
+          bottom: TabBar(
+            tabs: tabs,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.white,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            indicator: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+            onTap: (int index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+          ),
+        ),
+        body: const TabBarView(
+          children: <Widget>[
+            Center(child: Text('Home Content')),
+            Center(child: Text('Crop Doctor Content')),
+            Center(child: Text('Tasks Content')),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentPageIndex,
+          onTap: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.library_books,
+                color: Colors.black,
+              ),
+              label: 'News',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.store,
+                color: Colors.black,
+              ),
+              label: 'Store',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.people,
+                color: Colors.black,
+              ),
+              label: 'Community',
+            ),
+          ],
         ),
       ),
     );
