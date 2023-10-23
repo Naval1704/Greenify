@@ -8,12 +8,20 @@ class LobbyPage extends StatefulWidget {
 }
 
 class _LobbyPageState extends State<LobbyPage> {
-  int currentPageIndex = 0;
+  int currentTabIndex = 0;
+  int currentTabPageIndex = 0;
   final List<Tab> tabs = [
     Tab(text: 'Home'),
     Tab(text: 'Crop Doctor'),
     Tab(text: 'Tasks'),
   ];
+
+  void onTabTapped(int index) {
+    setState(() {
+      currentTabIndex = index;
+      currentTabPageIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class _LobbyPageState extends State<LobbyPage> {
           toolbarHeight: 60,
           automaticallyImplyLeading: false,
           flexibleSpace: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   Color(0xFF1EFF34),
@@ -40,7 +48,7 @@ class _LobbyPageState extends State<LobbyPage> {
             children: [
               IconButton(
                 iconSize: 40,
-                icon: const Icon(Icons.account_circle),
+                icon: const Icon(Icons.account_circle_sharp),
                 onPressed: () {
                   // Handle Account button press
                 },
@@ -57,14 +65,14 @@ class _LobbyPageState extends State<LobbyPage> {
           actions: <Widget>[
             IconButton(
               iconSize: 30,
-              icon: const Icon(Icons.notifications),
+              icon: const Icon(Icons.notifications_none),
               onPressed: () {
                 // Handle Notification button press
               },
             ),
             IconButton(
               iconSize: 30,
-              icon: const Icon(Icons.shopping_cart),
+              icon: const Icon(Icons.shopping_cart_outlined),
               onPressed: () {
                 // Handle Cart button press
               },
@@ -84,12 +92,13 @@ class _LobbyPageState extends State<LobbyPage> {
             ),
             onTap: (int index) {
               setState(() {
-                currentPageIndex = index;
+                currentTabPageIndex = index;
               });
             },
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             Center(child: Text('Home Content')),
             Center(child: Text('Crop Doctor Content')),
@@ -97,38 +106,31 @@ class _LobbyPageState extends State<LobbyPage> {
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentPageIndex,
-          onTap: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
+          type: BottomNavigationBarType.fixed, // Disable button transformation
+          currentIndex: currentTabIndex,
+          onTap: onTabTapped,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.home,
-                color: Colors.black,
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.library_books,
-                color: Colors.black,
               ),
               label: 'News',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.store,
-                color: Colors.black,
               ),
               label: 'Store',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.people,
-                color: Colors.black,
               ),
               label: 'Community',
             ),
