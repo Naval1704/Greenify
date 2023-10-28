@@ -27,17 +27,19 @@ class _TasksState extends State<Tasks> {
             ),
             TaskTile(
               imagePath: 'assets/Mango.png',
-              taskName: 'Task 1 Name',
-              taskDate: 'Task 1 Date',
-              taskType: 'Task 1 Type',
-              taskDescription: 'This is the description for Task 1.',
+              taskName: 'By: User Name',
+              taskDate: 'DD/MM/YYYY',
+              taskType: 'Leaf Type',
+              taskDescription:
+                  'This is the description for Task1, Here we will be giving Questions to the user as a part of task',
             ),
             TaskTile(
               imagePath: 'path_to_image2.png',
-              taskName: 'Task 2 Name',
-              taskDate: 'Task 2 Date',
-              taskType: 'Task 2 Type',
-              taskDescription: 'This is the description for Task 2.',
+              taskName: 'By: User Name',
+              taskDate: 'DD/MM/YYYY',
+              taskType: 'Leaf Type',
+              taskDescription:
+                  'This is the description for Task2, Here we will be giving Questions to the user as a part of task',
             ),
             // Add more TaskTiles for additional tasks
           ],
@@ -73,8 +75,9 @@ class TaskTile extends StatelessWidget {
             const EdgeInsets.only(bottom: 20.0), // Add spacing between boxes
         child: Card(
           elevation: 3, // Add elevation for a card-like effect
+          color: Color(0xFF9CFF9A),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
             children: [
@@ -99,7 +102,8 @@ class TaskTile extends StatelessWidget {
                     ),
                     Text(
                       'Date: $taskDate\nType: $taskType',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(
+                          color: Colors.grey, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
