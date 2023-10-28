@@ -23,10 +23,7 @@ class _TasksState extends State<Tasks> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
-      key: scaffoldKey,
       backgroundColor: Colors.white,
       body: SafeArea(
         top: true,
@@ -34,20 +31,24 @@ class _TasksState extends State<Tasks> {
           children: [
             Container(
               width: double.infinity,
-              height: 100,
-              decoration: BoxDecoration(
+              height: 50,
+              decoration: const BoxDecoration(
                 color: Colors.white,
               ),
             ),
-            Text(
-              'Pending Tasks',
-              style: TextStyle(
-                fontFamily: 'Aclonica',
-                fontSize: 16,
+            const Positioned(
+              top: 15,
+              left: 20,
+              child: Text(
+                'Pending Tasks',
+                style: TextStyle(
+                  fontFamily: 'Aclonica',
+                  fontSize: 16,
+                ),
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0.00, 1.00),
+              alignment: const AlignmentDirectional(0.00, 1.00),
               child: Padding(
                 padding: EdgeInsets.only(top: 100),
                 child: Container(
@@ -60,73 +61,69 @@ class _TasksState extends State<Tasks> {
                     padding: EdgeInsets.only(top: 25),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF6CFF69),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(22),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/559/600',
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment(0.00, 0.00),
-                                ),
+                      child: Row(mainAxisSize: MainAxisSize.max, children: [
+                        Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6CFF69),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(22),
+                              child: Image.network(
+                                'https://picsum.photos/seed/559/600',
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.contain,
+                                alignment: Alignment(0.00, 0.00),
                               ),
                             ),
                           ),
-                          Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF6CFF69),
+                        ),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6CFF69),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/559/600',
-                                  width: 300,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
+                              child: Image.network(
+                                'https://picsum.photos/seed/559/600',
+                                width: 300,
+                                height: 200,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                          Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF6CFF69),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/236/600',
-                                  width: 300,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
+                        ),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6CFF69),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Image.network(
+                                'https://picsum.photos/seed/236/600',
+                                width: 300,
+                                height: 200,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                        ]
-                            
-                      ),
+                        ),
+                      ]),
                     ),
                   ),
                 ),

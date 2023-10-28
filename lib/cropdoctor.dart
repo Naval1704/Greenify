@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class CropDoctor extends StatefulWidget {
   @override
@@ -12,6 +11,22 @@ class _CropDoctorState extends State<CropDoctor> {
   List<File> pastImages = []; // List to store past images
   final String imagesKey = 'pastImages';
 
+  Future<void> openCamera() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      // Do something with the captured image (e.g., display it).
+    }
+  }
+
+  Future<void> openGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      // Do something with the selected image (e.g., display it).
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,38 +34,118 @@ class _CropDoctorState extends State<CropDoctor> {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
+          SizedBox(height: 40),
           Align(
-            alignment: AlignmentDirectional(0.00, -0.50),
+            alignment: const AlignmentDirectional(0.00, 0.00),
             child: Container(
               width: double.infinity,
-              height: 116,
-              decoration: BoxDecoration(
-                color: Colors.white, // Set the background to white
+              height: 120,
+              decoration: const BoxDecoration(
+                color: Color(0xFFDFFFB7), // Set the background to white
               ),
               child: Align(
-                alignment: AlignmentDirectional(1.00, 1.00),
+                alignment: const AlignmentDirectional(1.00, 1.00),
                 child: Stack(
                   children: [
-                    Align(
-                      alignment: AlignmentDirectional(-1.00, 0.00),
+                    const Align(
+                      alignment: AlignmentDirectional(-0.55, -0.60),
                       child: Text(
                         'Click pictures and get solutions for your crop.',
                         style: TextStyle(
                           fontFamily: 'Aclonica',
-                          fontSize: 11,
+                          fontSize: 13,
                         ),
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-0.81, 0.83),
+                      alignment: const AlignmentDirectional(-0.85, 0.40),
                       child: ElevatedButton(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
+                        onPressed: openCamera, // Call openCamera when pressed
                         style: ElevatedButton.styleFrom(
-                          primary: Color(0xFF6CFF69), // Set button color to #6CFF69
+                          primary: Color(0xFF14FF00),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
-                        child: Text('Take a Picture'),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.camera,
+                                color: Colors.black), // Add a camera icon
+                            SizedBox(width: 8),
+                            Text('Take a Picture',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Align(
+                      alignment: AlignmentDirectional(0.85, 0.40),
+                      child: Icon(Icons.agriculture_rounded,
+                          size: 60,
+                          color: Colors.green), // Add a Crop Doctor icon
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: AlignmentDirectional(0.00, 0.00),
+            child: Padding(
+              padding: EdgeInsets.only(top: 100),
+              child: Container(
+                width: double.infinity,
+                height: 160,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF2F2F2),
+                ),
+                child: const Stack(
+                  children: [
+                    Positioned(
+                      top: 12, // Adjust the top position as needed
+                      left: -270,
+                      right: 0,
+                      child: Text(
+                        'My Queries',
+                        style: TextStyle(
+                          fontFamily: 'Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16, // Adjust the font size as needed
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional(0.00, 0.00),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'No crop problem yet',
+                            style: TextStyle(
+                              fontFamily: 'Sans',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15, // Adjust the font size as needed
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                              height:
+                                  8), // Add some space between the two text elements
+                          Text(
+                            'Use "Take a Picture" Button to raise a new problem',
+                            style: TextStyle(
+                              fontFamily: 'Sans',
+                              fontWeight:
+                                  FontWeight.w400, // Lighter font weight
+                              fontSize: 15, // Adjust the font size as needed
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -62,54 +157,25 @@ class _CropDoctorState extends State<CropDoctor> {
             alignment: AlignmentDirectional(0.00, 1.00),
             child: Padding(
               padding: EdgeInsets.only(top: 100),
-              child: Container(
-                width: double.infinity,
-                height: 159,
-                decoration: BoxDecoration(
-                  color: Color(0xFF9B9EA4),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional(0.00, 0.00),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: AlignmentDirectional(-0.80, -1.00),
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            'My Queries',
-                            style: TextStyle(
-                              fontFamily: 'Aclonica',
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional(0.00, 0.00),
-                        child: Text(
-                          'Use "Take A Picture" button to raise a new problem',
-                        ),
-                      ),
-                    ],
+              child: ElevatedButton(
+                onPressed: openGallery, // Call openGallery when pressed
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF14FF00),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: AlignmentDirectional(0.00, 1.00),
-            child: Padding(
-              padding: EdgeInsets.only(top: 100),
-              child: ElevatedButton(
-                onPressed: () {
-                  print('Button pressed ...');
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF6CFF69), // Set button color to #6CFF69
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.image_search_sharp,
+                        color: Colors.black), // Add a camera icon
+                    SizedBox(width: 8),
+                    Text('Select From Gallery',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold)),
+                  ],
                 ),
-                child: Text('Select from Gallery'),
               ),
             ),
           ),
