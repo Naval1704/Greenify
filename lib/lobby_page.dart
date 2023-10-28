@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:greenify/cropdoctor.dart';
+import 'package:greenify/homepage.dart';
+import 'package:greenify/tasks.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -100,9 +103,9 @@ class _LobbyPageState extends State<LobbyPage> {
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            Center(child: Text('Home Content')),
-            Center(child: Text('Crop Doctor Content')),
-            Center(child: Text('Tasks Content')),
+            Center(child: HomePage()),
+            Center(child: CropDoctor()),
+            Center(child: Tasks()),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -140,3 +143,4 @@ class _LobbyPageState extends State<LobbyPage> {
     );
   }
 }
+
