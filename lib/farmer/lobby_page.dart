@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:greenify/cropdoctor.dart';
-import 'package:greenify/homepage.dart';
-import 'package:greenify/tasks.dart';
+import 'package:greenify/farmer/sub-pages/cropdoctor.dart';
+import 'package:greenify/farmer/sub-pages/homepage.dart';
+import 'package:greenify/farmer/sub-pages/tasks.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);

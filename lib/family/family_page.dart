@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:greenify/family_form.dart';
-import 'package:greenify/lobby_page.dart';
+import 'package:greenify/family/family_form.dart';
+import 'package:greenify/farmer/lobby_page.dart';
+
 
 class FamilyPage extends StatefulWidget {
   FamilyPage({Key? key}) : super(key: key);

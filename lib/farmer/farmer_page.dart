@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
-import 'package:greenify/lobby_page.dart';
+import 'package:greenify/farmer/lobby_page.dart';
 
 class FarmerPage extends StatefulWidget {
   FarmerPage({Key? key}) : super(key: key);

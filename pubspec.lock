@@ -89,6 +89,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.0+7"
+  amplify_storage_s3:
+    dependency: "direct main"
+    description:
+      name: amplify_storage_s3
+      sha256: e3c0218cf41b283dea45ed055e1ec7c97fe95b94aaa6eeb804dea44e84a3a124
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
+  amplify_storage_s3_dart:
+    dependency: transitive
+    description:
+      name: amplify_storage_s3_dart
+      sha256: ac18899b9d1665010e7ff0a321f9aa3374ead7905066cd8016caf6d1b99fe1d9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.4"
   async:
     dependency: transitive
     description:
@@ -249,6 +265,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "903dd4ba13eae7cef64acc480e91bf54c3ddd23b5b90b639c170f3911e489620"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
   file_selector_linux:
     dependency: transitive
     description:

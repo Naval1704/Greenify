@@ -1,4 +1,7 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
+import 'package:greenify/aws/uploadimage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -60,7 +63,10 @@ class _CropDoctorState extends State<CropDoctor> {
                     Align(
                       alignment: const AlignmentDirectional(-0.85, 0.40),
                       child: ElevatedButton(
-                        onPressed: openCamera, // Call openCamera when pressed
+                        onPressed: () async {
+                          await uploadImage();
+                          await listAlbum(); // Call the uploadImage method
+                        }, // Call openCamera when pressed
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFF14FF00),
                           shape: RoundedRectangleBorder(
@@ -158,7 +164,9 @@ class _CropDoctorState extends State<CropDoctor> {
             child: Padding(
               padding: EdgeInsets.only(top: 100),
               child: ElevatedButton(
-                onPressed: openGallery, // Call openGallery when pressed
+                onPressed: () {
+                  // UploadImage();
+                }, // Call openGallery when pressed
                 style: ElevatedButton.styleFrom(
                   primary: Color(0xFF14FF00),
                   shape: RoundedRectangleBorder(
@@ -182,5 +190,31 @@ class _CropDoctorState extends State<CropDoctor> {
         ],
       ),
     );
+  }
+}
+
+Future<void> listAlbum() async {
+  try {
+    String? nextToken;
+    bool hasNextPage;
+    do {
+      final result = await Amplify.Storage.list(
+        path: 'album/',
+        options: StorageListOptions(
+          accessLevel: StorageAccessLevel.private,
+          pageSize: 50,
+          nextToken: nextToken,
+          pluginOptions: const S3ListPluginOptions(
+            excludeSubPaths: true,
+          ),
+        ),
+      ).result;
+      safePrint('Listed items: ${result.items}');
+      nextToken = result.nextToken;
+      hasNextPage = result.hasNextPage;
+    } while (hasNextPage);
+  } on StorageException catch (e) {
+    safePrint('Error listing files: ${e.message}');
+    rethrow;
   }
 }

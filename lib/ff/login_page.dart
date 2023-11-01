@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'farmer_page.dart'; // Import your Farmer page
-import 'family_page.dart'; // Import your Family page
+import 'package:greenify/family/family_page.dart';
+import 'package:greenify/farmer/farmer_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key});
