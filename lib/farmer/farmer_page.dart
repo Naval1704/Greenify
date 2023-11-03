@@ -153,6 +153,24 @@ class LoginContent extends StatelessWidget {
     return Authenticator(
       initialStep: AuthenticatorStep.signIn,
       child: MaterialApp(
+        theme: ThemeData.from(
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.red,
+            backgroundColor: Colors.white,
+          ),
+        ).copyWith(
+          indicatorColor: Colors.red,
+        ),
+        // set the dark theme (optional)
+        darkTheme: ThemeData.from(
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.red,
+            backgroundColor: Colors.black,
+            brightness: Brightness.dark,
+          ),
+        ),
+        // set the theme mode to respond to the user's system preferences (optional)
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
         builder: Authenticator.builder(),
         home: Scaffold(
