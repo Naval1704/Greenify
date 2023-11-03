@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:greenify/farmer/sub-pages/cropdoctor.dart';
 import 'package:greenify/farmer/sub-pages/homepage.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:greenify/farmer/farmer_page.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -10,13 +12,27 @@ class LobbyPage extends StatefulWidget {
   _LobbyPageState createState() => _LobbyPageState();
 }
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+Future<void> _handleSignout(BuildContext context) async {
+  try {
+    await Amplify.Auth.signOut(); // Sign the user out from all devices
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => FarmerPage()),
+    );
+  } on AuthException catch (e) {
+    print("Error signing out: ${e.message}");
+    // Handle error, show a message, or navigate to an error screen if needed
+  }
+}
+
 class _LobbyPageState extends State<LobbyPage> {
   int currentTabIndex = 0;
   int currentTabPageIndex = 0;
   final List<Tab> tabs = [
-    Tab(text: 'Home'),
-    Tab(text: 'Crop Doctor'),
-    Tab(text: 'Tasks'),
+    const Tab(text: 'Home'),
+    const Tab(text: 'Crop Doctor'),
+    const Tab(text: 'Tasks'),
   ];
 
   void onTabTapped(int index) {
@@ -31,6 +47,7 @@ class _LobbyPageState extends State<LobbyPage> {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           toolbarHeight: 60,
           automaticallyImplyLeading: false,
@@ -54,6 +71,7 @@ class _LobbyPageState extends State<LobbyPage> {
                 icon: const Icon(Icons.account_circle_sharp),
                 onPressed: () {
                   // Handle Account button press
+                  Scaffold.of(context).openDrawer();
                 },
               ),
               const Text(
@@ -101,11 +119,11 @@ class _LobbyPageState extends State<LobbyPage> {
           ),
         ),
         body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           children: <Widget>[
             Center(child: HomePage()),
             Center(child: CropDoctor()),
-            Center(child: Tasks()),
+            const Center(child: Tasks()),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -138,6 +156,31 @@ class _LobbyPageState extends State<LobbyPage> {
               label: 'Community',
             ),
           ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              Container(
+                color: Color(0xFF14FF00), // Set the background color to red
+                child: const ListTile(
+                  title:
+                      Text("Your Name", style: TextStyle(color: Colors.white)),
+                  subtitle: Text("youremail@example.com",
+                      style: TextStyle(color: Colors.white)),
+                  leading: CircleAvatar(
+                      // Add user profile picture here
+                      ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text("Sign Out"),
+                onTap: () {
+                  _handleSignout(context);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
