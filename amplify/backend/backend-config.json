@@ -1,6 +1,6 @@
 {
   "auth": {
-    "greenify985595d6": {
+    "greenifyb490cb10": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -25,6 +25,76 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "greenPostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "greenPreSignup": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_greenPostConfirmation_GROUP": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_DOMAINALLOWLIST": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_DOMAINDENYLIST": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
     }
   },
   "storage": {

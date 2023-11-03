@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "email-filter-allowlist",
+    "email-filter-denylist"
+  ],
+  "parentResource": "green",
+  "functionName": "greenPreSignup",
+  "resourceName": "greenPreSignup",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "C:\\snapshot\\amplify-cli\\build\\node_modules\\@aws-amplify\\amplify-category-auth\\provider-utils\\awscloudformation\\triggers\\PreSignup",
+  "triggerTemplate": "PreSignup.json.ejs",
+  "triggerEventPath": "PreSignup.event.json",
+  "roleName": "greenPreSignup",
+  "skipEdit": true
+}

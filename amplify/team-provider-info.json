@@ -9,14 +9,28 @@
       "UnauthRoleName": "amplify-greenify-dev-133643-unauthRole",
       "StackName": "amplify-greenify-dev-133643",
       "StackId": "arn:aws:cloudformation:ap-south-1:972451105760:stack/amplify-greenify-dev-133643/741d4690-64e8-11ee-ac1b-02af78724bbc",
-      "AmplifyAppId": "dps2ra5ds614r"
+      "AmplifyAppId": "dps2ra5ds614r",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-greenify-dev-133643-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
-      "auth": {
-        "greenify985595d6": {}
-      },
       "storage": {
         "greenify": {}
+      },
+      "function": {
+        "greenPostConfirmation": {
+          "GROUP": "green",
+          "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
+          "s3Key": "amplify-builds/greenPostConfirmation-647245706952326d526a-build.zip"
+        },
+        "greenPreSignup": {
+          "DOMAINALLOWLIST": "gmail.com,iitj.ac.in",
+          "DOMAINDENYLIST": "gmail.com",
+          "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
+          "s3Key": "amplify-builds/greenPreSignup-70444b46547356533056-build.zip"
+        }
+      },
+      "auth": {
+        "greenifyb490cb10": {}
       }
     }
   }
