@@ -4,6 +4,8 @@ import 'package:greenify/farmer/sub-pages/homepage.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
+import 'package:greenify/farmer/sub-pages/newsPage.dart';
+import 'package:greenify/farmer/lobby_page.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -40,7 +42,7 @@ class _LobbyPageState extends State<LobbyPage> {
       currentTabIndex = index;
       currentTabPageIndex = index;
     });
-  }
+  }s
 
   @override
   Widget build(BuildContext context) {
@@ -123,39 +125,72 @@ class _LobbyPageState extends State<LobbyPage> {
           children: <Widget>[
             Center(child: HomePage()),
             Center(child: CropDoctor()),
+            if (currentTabPageIndex == 1)
+              Center(child: newsPage()), // Add NewsPage widget
             const Center(child: Tasks()),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed, // Disable button transformation
-          currentIndex: currentTabIndex,
-          onTap: onTabTapped,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // Background color of the navigation bar
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2), // Shadow color
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(
+                    0, -3), // Adjust the offset to control the floating effect
               ),
-              label: 'Home',
+            ],
+          ),
+          child: BottomNavigationBar(
+            type:
+                BottomNavigationBarType.fixed, // Disable button transformation
+            currentIndex: currentTabIndex,
+            onTap: onTabTapped,
+            selectedLabelStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.library_books,
+            unselectedLabelStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+            ),
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home,
+                  size: 24,
+                  color: currentTabIndex == 0 ? Colors.blue : Colors.grey,
+                ),
+                label: 'Home',
               ),
-              label: 'News',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.store,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.my_library_books, // Custom flower icon
+                  size: 24,
+                  color: currentTabIndex == 1 ? Colors.blue : Colors.grey,
+                ),
+                label: 'News', // Customize the label
               ),
-              label: 'Store',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.shopping_cart,
+                  size: 24,
+                  color: currentTabIndex == 2 ? Colors.blue : Colors.grey,
+                ),
+                label: 'Shop',
               ),
-              label: 'Community',
-            ),
-          ],
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.people,
+                  size: 24,
+                  color: currentTabIndex == 3 ? Colors.blue : Colors.grey,
+                ),
+                label: 'Community',
+              ),
+            ],
+          ),
         ),
         drawer: Drawer(
           child: ListView(
@@ -174,7 +209,7 @@ class _LobbyPageState extends State<LobbyPage> {
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
-                title: Text("Sign Out"),
+                title: const Text("Sign Out"),
                 onTap: () {
                   _handleSignout(context);
                 },
