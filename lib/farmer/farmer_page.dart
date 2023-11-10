@@ -165,7 +165,7 @@ class LoginContent extends StatelessWidget {
         darkTheme: ThemeData.from(
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.white,
             brightness: Brightness.dark,
           ),
         ),
