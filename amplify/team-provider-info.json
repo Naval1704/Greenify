@@ -31,6 +31,12 @@
       },
       "auth": {
         "greenifyb490cb10": {}
+      },
+      "api": {
+        "greenify": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   }
