@@ -124,6 +124,7 @@ class _LobbyPageState extends State<LobbyPage> {
           children: <Widget>[
             Center(child: HomePage()),
             Center(child: CropDoctor()),
+            Center(child: Tasks()),
           ],
         ),
         bottomNavigationBar: Container(
