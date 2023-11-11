@@ -5,7 +5,7 @@ import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
 import 'package:greenify/farmer/sub-pages/newsPage.dart';
-import 'package:greenify/farmer/lobby_page.dart';
+// import 'package:greenify/farmer/lobby_page.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LobbyPageState extends State<LobbyPage> {
       currentTabIndex = index;
       currentTabPageIndex = index;
     });
-  }s
+  }
 
   @override
   Widget build(BuildContext context) {
