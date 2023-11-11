@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:greenify/farmer/lobby_page.dart';
@@ -62,7 +61,7 @@ class _FarmerPageState extends State<FarmerPage> {
                       height: 444,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
+                        boxShadow: const [
                           const BoxShadow(
                             color: Color.fromRGBO(0, 0, 0, 0.25),
                             offset: Offset(0, 4),

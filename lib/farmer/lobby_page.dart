@@ -4,7 +4,6 @@ import 'package:greenify/farmer/sub-pages/homepage.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
-import 'package:greenify/farmer/sub-pages/newsPage.dart';
 // import 'package:greenify/farmer/lobby_page.dart';
 
 class LobbyPage extends StatefulWidget {
@@ -125,9 +124,6 @@ class _LobbyPageState extends State<LobbyPage> {
           children: <Widget>[
             Center(child: HomePage()),
             Center(child: CropDoctor()),
-            if (currentTabPageIndex == 1)
-              Center(child: newsPage()), // Add NewsPage widget
-            const Center(child: Tasks()),
           ],
         ),
         bottomNavigationBar: Container(
