@@ -3,7 +3,6 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:greenify/aws/uploadimage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
@@ -13,7 +12,6 @@ class CropDoctor extends StatefulWidget {
 }
 
 class _CropDoctorState extends State<CropDoctor> {
-  List<File> pastImages = []; // List to store past images
   final String imagesKey = 'pastImages';
 
   Future<void> openCamera() async {
@@ -21,6 +19,7 @@ class _CropDoctorState extends State<CropDoctor> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
       // Do something with the captured image (e.g., display it).
+      await uploadImage();
     }
   }
 
@@ -29,6 +28,7 @@ class _CropDoctorState extends State<CropDoctor> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       // Do something with the selected image (e.g., display it).
+      await uploadImage();
     }
   }
 
@@ -66,9 +66,13 @@ class _CropDoctorState extends State<CropDoctor> {
                       alignment: const AlignmentDirectional(-0.85, 0.40),
                       child: ElevatedButton(
                         onPressed: () async {
+
                           await uploadImage();
                           await listAlbum(); // Call the uploadImage method
                           // await downloadToLocalFile(String key);
+
+                          // await openCamera();
+
                         }, // Call openCamera when pressed
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFF14FF00),
@@ -167,8 +171,9 @@ class _CropDoctorState extends State<CropDoctor> {
             child: Padding(
               padding: EdgeInsets.only(top: 100),
               child: ElevatedButton(
-                onPressed: () {
-                  // UploadImage();
+                onPressed: () async {
+                  await uploadImage();
+                  await listAlbum(); // Call the uploadImage method
                 }, // Call openGallery when pressed
                 style: ElevatedButton.styleFrom(
                   primary: Color(0xFF14FF00),
