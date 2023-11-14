@@ -8,8 +8,7 @@ const amplifyconfig = '''{
                     "endpointType": "GraphQL",
                     "endpoint": "https://a6436yor75fihcj3vxx66uxtzq.appsync-api.ap-south-1.amazonaws.com/graphql",
                     "region": "ap-south-1",
-                    "authorizationType": "API_KEY",
-                    "apiKey": "da2-c5umpknv7rdxrm33ghmcp2p4wa"
+                    "authorizationType": "AMAZON_COGNITO_USER_POOLS"
                 }
             }
         }
@@ -21,6 +20,20 @@ const amplifyconfig = '''{
                 "Version": "0.1.0",
                 "IdentityManager": {
                     "Default": {}
+                },
+                "AppSync": {
+                    "Default": {
+                        "ApiUrl": "https://a6436yor75fihcj3vxx66uxtzq.appsync-api.ap-south-1.amazonaws.com/graphql",
+                        "Region": "ap-south-1",
+                        "AuthMode": "AMAZON_COGNITO_USER_POOLS",
+                        "ClientDatabasePrefix": "greenify_AMAZON_COGNITO_USER_POOLS"
+                    },
+                    "greenify_AWS_IAM": {
+                        "ApiUrl": "https://a6436yor75fihcj3vxx66uxtzq.appsync-api.ap-south-1.amazonaws.com/graphql",
+                        "Region": "ap-south-1",
+                        "AuthMode": "AWS_IAM",
+                        "ClientDatabasePrefix": "greenify_AWS_IAM"
+                    }
                 },
                 "CredentialsProvider": {
                     "CognitoIdentity": {
@@ -40,20 +53,20 @@ const amplifyconfig = '''{
                 "Auth": {
                     "Default": {
                         "authenticationFlowType": "USER_SRP_AUTH",
-                        "socialProviders": [],
-                        "usernameAttributes": [
-                            "EMAIL"
-                        ],
-                        "signupAttributes": [
-                            "EMAIL"
+                        "mfaConfiguration": "OFF",
+                        "mfaTypes": [
+                            "SMS"
                         ],
                         "passwordProtectionSettings": {
                             "passwordPolicyMinLength": 8,
                             "passwordPolicyCharacters": []
                         },
-                        "mfaConfiguration": "OFF",
-                        "mfaTypes": [
-                            "SMS"
+                        "signupAttributes": [
+                            "EMAIL"
+                        ],
+                        "socialProviders": [],
+                        "usernameAttributes": [
+                            "EMAIL"
                         ],
                         "verificationMechanisms": [
                             "EMAIL"
@@ -64,15 +77,6 @@ const amplifyconfig = '''{
                     "Default": {
                         "Bucket": "green133643-dev",
                         "Region": "ap-south-1"
-                    }
-                },
-                "AppSync": {
-                    "Default": {
-                        "ApiUrl": "https://a6436yor75fihcj3vxx66uxtzq.appsync-api.ap-south-1.amazonaws.com/graphql",
-                        "Region": "ap-south-1",
-                        "AuthMode": "API_KEY",
-                        "ApiKey": "da2-c5umpknv7rdxrm33ghmcp2p4wa",
-                        "ClientDatabasePrefix": "greenify_API_KEY"
                     }
                 }
             }

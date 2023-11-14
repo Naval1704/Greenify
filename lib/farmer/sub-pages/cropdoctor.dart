@@ -5,6 +5,8 @@ import 'package:greenify/aws/uploadimage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:path_provider/path_provider.dart';
+
 class CropDoctor extends StatefulWidget {
   @override
   _CropDoctorState createState() => _CropDoctorState();
@@ -66,6 +68,7 @@ class _CropDoctorState extends State<CropDoctor> {
                         onPressed: () async {
                           await uploadImage();
                           await listAlbum(); // Call the uploadImage method
+                          // await downloadToLocalFile(String key);
                         }, // Call openCamera when pressed
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xFF14FF00),
@@ -216,5 +219,58 @@ Future<void> listAlbum() async {
   } on StorageException catch (e) {
     safePrint('Error listing files: ${e.message}');
     rethrow;
+  }
+}
+
+// import 'package:amplify_flutter/amplify.dart';
+// import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+
+Future<String> getUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: StorageGetUrlOptions(
+          accessLevel: accessLevel,
+          pluginOptions: const S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(minutes: 1),
+          ),
+        ),
+      ).result;
+      setState(() {
+        var imageUrl = result.url.toString();
+      });
+      return result.url.toString();
+    } on StorageException catch (e) {
+      var _logger;
+      _logger.error('Get URL error - ${e.message}');
+      rethrow;
+    }
+  }
+
+  
+  void setState(Null Function() param0) {
+  }
+
+  // import 'package:path_provider/path_provider.dart';
+
+Future<void> downloadToLocalFile(String key) async {
+  final documentsDir = await getApplicationDocumentsDirectory();
+  final filepath = documentsDir.path + '/example.txt';
+  try {
+    final result = await Amplify.Storage.downloadFile(
+      key: key,
+      localFile: AWSFile.fromPath(filepath),
+      onProgress: (progress) {
+        safePrint('Fraction completed: ${progress.fractionCompleted}');
+      },
+    ).result;
+
+    safePrint('Downloaded file is located at: ${result.localFile.path}');
+  } on StorageException catch (e) {
+    safePrint(e.message);
   }
 }

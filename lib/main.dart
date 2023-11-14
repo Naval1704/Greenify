@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   void _configureAmplify() async {
     try {
-      await Amplify.addPlugins([AmplifyAuthCognito(), AmplifyStorageS3(),AmplifyAPI()]);
+      await Amplify.addPlugins([AmplifyAuthCognito(), AmplifyStorageS3()]);
       await Amplify.configure(amplifyconfig);
       safePrint('Successfully configured');
     } on Exception catch (e) {
