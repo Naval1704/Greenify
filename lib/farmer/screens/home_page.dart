@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_aws_s3/widgets/app_drawer.dart';
 import 'package:greenify/farmer/widgets/app_drawer.dart';
 
-class HomePage extends StatelessWidget {
+class Home_Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

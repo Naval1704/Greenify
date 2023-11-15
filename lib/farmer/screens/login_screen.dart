@@ -166,7 +166,7 @@ class _MyHomePageState extends State<AuthScreen> {
       );
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (ctx) => HomePage()));
+          context, MaterialPageRoute(builder: (ctx) => Home_Page()));
     } on AuthException catch (e) {
       var message = e.message;
       if (message == sessionExistsMsg) {
