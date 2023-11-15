@@ -8,8 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:greenify/aws/uploadimage.dart';
 import 'package:greenify/farmer/providers/s3handler.dart';
 import 'package:greenify/farmer/widgets/app_drawer.dart';
-// import 'package:flutter_aws_s3/providers/s3_handler.dart';
-// import 'package:flutter_aws_s3/widgets/app_drawer.dart';
 
 class SelectImage extends StatefulWidget {
   const SelectImage({Key? key}) : super(key: key);

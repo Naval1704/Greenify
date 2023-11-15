@@ -22,45 +22,45 @@ class AppDrawer extends StatelessWidget {
                 title: Text('AWS Amplify For Flutter'),
                 automaticallyImplyLeading: true,
               ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (ctx) => Home_Page(),
-                    ),
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text('Show Session Details'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (ctx) => SessionDetailsScreen(),
-                    ),
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.cloud_upload),
-                title: Text('Upload Images'),
-                onTap: () async {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (ctx) => SelectImage(),
-                    ),
-                  );
-                },
-              ),
-              Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.home),
+              //   title: Text('Home'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (ctx) => Home_Page(),
+              //       ),
+              //     );
+              //   },
+              // ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.info),
+              //   title: Text('Show Session Details'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (ctx) => SessionDetailsScreen(),
+              //       ),
+              //     );
+              //   },
+              // ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.cloud_upload),
+              //   title: Text('Upload Images'),
+              //   onTap: () async {
+              //     Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (ctx) => SelectImage(),
+              //       ),
+              //     );
+              //   },
+              // ),
+              // Divider(),
               ListTile(
                 leading: Icon(Icons.cloud_download),
                 title: Text('Download Images'),
