@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:greenify/farmer/screens/home_page.dart';
 import 'package:greenify/farmer/sub-pages/cropdoctor.dart';
 import 'package:greenify/farmer/sub-pages/homepage.dart';
-// import 'package:greenify/farmer/sub-pages/homepage.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
-import 'package:greenify/farmer/screens/home_page.dart';
-// import 'package:greenify/farmer/lobby_page.dart';
 
 class LobbyPage extends StatefulWidget {
   const LobbyPage({Key? key}) : super(key: key);
@@ -20,7 +17,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 Future<void> _handleSignout(BuildContext context) async {
   try {
-    await Amplify.Auth.signOut(); // Sign the user out from all devices
+    await Amplify.Auth.signOut();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => FarmerPage()),
     );
@@ -74,7 +71,6 @@ class _LobbyPageState extends State<LobbyPage> {
                 iconSize: 40,
                 icon: const Icon(Icons.account_circle_sharp),
                 onPressed: () {
-                  // Handle Account button press
                   Scaffold.of(context).openDrawer();
                 },
               ),
@@ -126,28 +122,24 @@ class _LobbyPageState extends State<LobbyPage> {
           physics: const NeverScrollableScrollPhysics(),
           children: <Widget>[
             Center(child: HomePage()),
-
             Center(child: Home_Page()),
-
             Center(child: Tasks()),
           ],
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: Colors.white, // Background color of the navigation bar
+            color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2), // Shadow color
+                color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 5,
                 blurRadius: 7,
-                offset: Offset(
-                    0, -3), // Adjust the offset to control the floating effect
+                offset: Offset(0, -3),
               ),
             ],
           ),
           child: BottomNavigationBar(
-            type:
-                BottomNavigationBarType.fixed, // Disable button transformation
+            type: BottomNavigationBarType.fixed,
             currentIndex: currentTabIndex,
             onTap: onTabTapped,
             selectedLabelStyle: TextStyle(
@@ -169,11 +161,11 @@ class _LobbyPageState extends State<LobbyPage> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.my_library_books, // Custom flower icon
+                  Icons.my_library_books,
                   size: 24,
                   color: currentTabIndex == 1 ? Colors.blue : Colors.grey,
                 ),
-                label: 'News', // Customize the label
+                label: 'News',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
@@ -197,17 +189,63 @@ class _LobbyPageState extends State<LobbyPage> {
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-              Container(
-                color: Color(0xFF14FF00), // Set the background color to red
-                child: const ListTile(
-                  title:
-                      Text("Your Name", style: TextStyle(color: Colors.white)),
-                  subtitle: Text("youremail@example.com",
-                      style: TextStyle(color: Colors.white)),
-                  leading: CircleAvatar(
-                      // Add user profile picture here
-                      ),
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF1EFF34),
+                      Color(0xFF47FF4B),
+                      Color(0xFF14FF00),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.topCenter,
+                  ),
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Name",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      "youremail@example.com",
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.home),
+                title: const Text("Home"),
+                onTap: () {
+                  // Handle Home button press
+                  Navigator.pop(context); // Close the drawer
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.my_library_books),
+                title: const Text("News"),
+                onTap: () {
+                  // Handle News button press
+                  Navigator.pop(context); // Close the drawer
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.shopping_cart),
+                title: const Text("Shop"),
+                onTap: () {
+                  // Handle Shop button press
+                  Navigator.pop(context); // Close the drawer
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.people),
+                title: const Text("Community"),
+                onTap: () {
+                  // Handle Community button press
+                  Navigator.pop(context); // Close the drawer
+                },
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
