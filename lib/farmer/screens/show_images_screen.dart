@@ -1,13 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:flutter/material.dart';
 import 'package:greenify/farmer/providers/s3handler.dart';
 import 'package:greenify/farmer/widgets/app_drawer.dart';
-// import 'package:flutter_aws_s3/providers/s3_handler.dart';
-// import 'package:flutter_aws_s3/widgets/app_drawer.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ListBucketScreen extends StatefulWidget {
   @override
@@ -96,10 +94,17 @@ class ShowImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: images,
-      builder: (ctx, snapshot) =>
-          snapshot.connectionState == ConnectionState.waiting
-              ? Center(child: CircularProgressIndicator())
-              : ImageGrid(images: snapshot.data as List<String>),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return Center(child: Text('No images available.'));
+        } else {
+          return ImageGrid(images: snapshot.data as List<String>);
+        }
+      },
     );
   }
 }
