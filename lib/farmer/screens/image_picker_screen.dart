@@ -5,6 +5,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:greenify/aws/uploadimage.dart';
 import 'package:greenify/farmer/providers/s3handler.dart';
 import 'package:greenify/farmer/widgets/app_drawer.dart';
 // import 'package:flutter_aws_s3/providers/s3_handler.dart';
@@ -106,17 +107,14 @@ class _SelectImageState extends State<SelectImage> {
   }
 
   // Upload the Image to S3
-  void uploadFile() async {
+  Future<void> uploadFile() async {
     setState(() {
       _uploadInProgress = true;
       _uploadSuccess = null;
     });
 
     try {
-      await s3Handler.uploadFile(
-        filePath: _fileName!,
-        accessLevel: _storageAccessLevel,
-      );
+      await uploadImage(); // Use the uploadImage function here
       _uploadSuccess = true;
     } on StorageException catch (e) {
       var message = e.message;
