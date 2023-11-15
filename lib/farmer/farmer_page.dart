@@ -165,7 +165,6 @@ class LoginContent extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
             backgroundColor: Colors.white,
-            brightness: Brightness.dark,
           ),
         ),
         // set the theme mode to respond to the user's system preferences (optional)
