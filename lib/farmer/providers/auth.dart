@@ -2,16 +2,13 @@ import 'dart:async';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
-// import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:greenify/aws/amplifyconfiguration.dart';
-// import 'package:flutter_aws_s3/amplifyconfiguration.dart';
 
 class Auth extends ChangeNotifier {
   bool isSignUpComplete = false;
   bool isSignedIn = false;
-  String? username;
 
   Auth() {
     configureCognitoPluginWrapper();
@@ -22,7 +19,6 @@ class Auth extends ChangeNotifier {
   }
 
   Future<void> configureCognitoPlugin() async {
-    // Add Plugins
     AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
     AmplifyStorageS3 storagePlugin = AmplifyStorageS3();
 
@@ -31,8 +27,6 @@ class Auth extends ChangeNotifier {
       storagePlugin,
     ]);
 
-    // Once Plugins are added, configure Amplify
-    // Note: Amplify can only be configured once.
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
@@ -40,36 +34,34 @@ class Auth extends ChangeNotifier {
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
     }
 
-    Amplify.Hub.listen([HubChannel.Auth] as HubChannel<dynamic, HubEvent<Object?>>, (hubEvent) {
-      switch (hubEvent.eventName) {
-        case "SIGNED_IN":
-          print("USER IS SIGNED IN");
-          break;
-        case "SIGNED_OUT":
-          print("USER IS SIGNED OUT");
-          break;
-        case "SESSION_EXPIRED":
-          print("USER IS SIGNED IN");
-          break;
-      }
-    });
+    Amplify.Hub.listen(
+      [HubChannel.Auth] as HubChannel<dynamic, HubEvent<Object?>>,
+      (hubEvent) {
+        switch (hubEvent.eventName) {
+          case "SIGNED_IN":
+            print("USER IS SIGNED IN");
+            break;
+          case "SIGNED_OUT":
+            print("USER IS SIGNED OUT");
+            break;
+          case "SESSION_EXPIRED":
+            print("USER IS SIGNED IN");
+            break;
+        }
+      },
+    );
   }
 
-  /// Signup a User
-  Future<void> signUp(String username, String password, String email) async {
+  Future<void> signUp(String email, String password) async {
     try {
       Map<String, String> userAttributes = {
         "email": email,
-        "phone_number": "",
       };
 
       SignUpResult res = await Amplify.Auth.signUp(
-        username: username,
+        username: email,
         password: password,
-        // ignore: deprecated_member_use
-        options: CognitoSignUpOptions(
-        
-        ),
+        options: CognitoSignUpOptions(),
       );
 
       isSignUpComplete = res.isSignUpComplete;
@@ -80,7 +72,20 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  /// Confirm User
+  Future<void> signIn(String email, String password) async {
+    try {
+      SignInResult res = await Amplify.Auth.signIn(
+        username: email,
+        password: password,
+      );
+      isSignedIn = true;
+    } on AuthException catch (e) {
+      throw (e);
+    } catch (error) {
+      throw (error);
+    }
+  }
+
   Future<void> confirm(String username, String confirmationCode) async {
     try {
       SignUpResult res = await Amplify.Auth.confirmSignUp(
@@ -96,27 +101,6 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  /// Signin a User
-  Future<void> signIn(String username, String password) async {
-    try {
-      SignInResult res = await Amplify.Auth.signIn(
-        username: username,
-        password: password,
-      );
-      isSignedIn = true;
-    } on AuthException catch (e) {
-      throw (e);
-    } catch (error) {
-      throw (error);
-    }
-  }
-
-  Future<bool> _isSignedIn() async {
-    final session = await Amplify.Auth.fetchAuthSession();
-    return session.isSignedIn;
-  }
-
-  // Sign Out the User.
   Future<void> signOut() async {
     try {
       await Amplify.Auth.signOut();
@@ -156,5 +140,10 @@ class Auth extends ChangeNotifier {
       attributes = await Amplify.Auth.fetchUserAttributes();
     }
     return attributes;
+  }
+
+  Future<bool> _isSignedIn() async {
+    final session = await Amplify.Auth.fetchAuthSession();
+    return session.isSignedIn;
   }
 }
