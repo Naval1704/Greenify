@@ -74,9 +74,10 @@ class UserAttributesWidget extends StatelessWidget {
                   ...(snapshot.data as List<AuthUserAttribute>).map(
                     (attribute) {
                       return ListTile(
-                        leading: _getIcon(attribute.userAttributeKey),
+                        leading:
+                            _getIcon(attribute.userAttributeKey.toString()),
                         title: SingleAttribute(
-                          attribute: attribute.userAttributeKey,
+                          attribute: attribute.userAttributeKey.toString(),
                           value: attribute.value,
                         ),
                       );

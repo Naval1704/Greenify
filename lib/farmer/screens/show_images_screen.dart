@@ -135,7 +135,7 @@ class SampleItem extends StatefulWidget {
 }
 
 class _SampleItemState extends State<SampleItem> {
-  bool? _downloadInProgress;
+  bool? downloadInProgress;
   bool? _downloadSuccess;
 
   // Alert Dialog to show any error messages.
@@ -159,9 +159,9 @@ class _SampleItemState extends State<SampleItem> {
     );
   }
 
-  void _downloadFile(String path) async {
+  void downloadFile(String path) async {
     setState(() {
-      _downloadInProgress = true;
+      downloadInProgress = true;
       _downloadSuccess = null;
     });
 
@@ -179,7 +179,7 @@ class _SampleItemState extends State<SampleItem> {
     }
 
     setState(() {
-      _downloadInProgress = false;
+      downloadInProgress = false;
     });
   }
 
@@ -197,10 +197,10 @@ class _SampleItemState extends State<SampleItem> {
               ),
             )
           : GridTile(
-              child: _downloadInProgress == null
+              child: downloadInProgress == null
                   ? GestureDetector(
                       onTap: () {
-                        _downloadFile(widget.imagePath.split("/").last);
+                        downloadFile(widget.imagePath.split("/").last);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -208,11 +208,11 @@ class _SampleItemState extends State<SampleItem> {
                         ),
                         child: Column(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.image_outlined,
                               size: 100,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 3,
                             ),
                             Text(widget.imagePath.split("/").last),

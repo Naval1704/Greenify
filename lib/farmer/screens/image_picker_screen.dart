@@ -12,7 +12,6 @@ import 'package:greenify/farmer/widgets/app_drawer.dart';
 
 class SelectImage extends StatefulWidget {
   const SelectImage({Key? key}) : super(key: key);
-  
 
   @override
   _SelectImageState createState() => _SelectImageState();
@@ -21,7 +20,6 @@ class SelectImage extends StatefulWidget {
 class _SelectImageState extends State<SelectImage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   S3Handler s3Handler = S3Handler();
-
 
   String? _fileName;
   List<PlatformFile>? _paths;
@@ -108,14 +106,14 @@ class _SelectImageState extends State<SelectImage> {
   }
 
   // Upload the Image to S3
-  void _uploadFile() async {
+  void uploadFile() async {
     setState(() {
       _uploadInProgress = true;
       _uploadSuccess = null;
     });
 
     try {
-      await s3Handler._uploadFile(
+      await s3Handler.uploadFile(
         filePath: _fileName!,
         accessLevel: _storageAccessLevel,
       );
@@ -161,21 +159,21 @@ class _SelectImageState extends State<SelectImage> {
                       : Container(),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               _fileName != null
                   ? Flexible(
                       fit: FlexFit.loose,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
                           '$_bucketObjectName',
                         ),
                       ),
                     )
                   : Container(),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               _fileName != null
@@ -184,7 +182,7 @@ class _SelectImageState extends State<SelectImage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Container(
@@ -201,7 +199,7 @@ class _SelectImageState extends State<SelectImage> {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: FloatingActionButton(
                                 heroTag: "tag1",
-                                onPressed: _uploadFile,
+                                onPressed: uploadFile,
                                 child: const Icon(Icons.upload),
                               ),
                             ),
@@ -252,7 +250,7 @@ class _StorageAcceesLevelState extends State<StorageAcceesLevel> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             'Selected required Access Level',
@@ -263,13 +261,13 @@ class _StorageAcceesLevelState extends State<StorageAcceesLevel> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: DecoratedBox(
-            decoration: ShapeDecoration(
+            decoration: const ShapeDecoration(
               color: Colors.blue,
               shape: RoundedRectangleBorder(
                 side: BorderSide(

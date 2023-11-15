@@ -9,16 +9,23 @@ class S3Handler extends StatefulWidget {
 
   @override
   State<S3Handler> createState() => _S3Handler();
+
+  uploadFile(
+      {required String filePath, required StorageAccessLevel accessLevel}) {}
+  static downloadFile(String path) {}
+  static Future<List<String>>? listItems() {}
 }
 
 class _S3Handler extends State<S3Handler> {
-
   @override
   void initState() {
     super.initState();
     // _checkAuthStatus();
     _listAllPublicFiles();
   }
+
+  S3Handler s3Handler = const S3Handler(); // Instantiate the class
+
   get _logger => null;
   List<StorageItem> list = [];
   var imageUrl = '';
@@ -27,7 +34,10 @@ class _S3Handler extends State<S3Handler> {
   /// Upload a given file from Local storage to AWS S3. The File can have any of
   /// Guest/Private/Protected access levels.
   ///
-  Future<void> _uploadFile() async {
+  Future<void> uploadFile({
+    required String filePath,
+    required StorageAccessLevel accessLevel,
+  }) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png'],
@@ -128,8 +138,7 @@ class _S3Handler extends State<S3Handler> {
   }
 
   // ignore: annotate_overrides
-  
-  
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
