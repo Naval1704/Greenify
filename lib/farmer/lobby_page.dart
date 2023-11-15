@@ -71,7 +71,7 @@ class _LobbyPageState extends State<LobbyPage> {
                 iconSize: 40,
                 icon: const Icon(Icons.account_circle_sharp),
                 onPressed: () {
-                  Scaffold.of(context).openDrawer();
+                  _scaffoldKey.currentState?.openDrawer();
                 },
               ),
               const Text(
