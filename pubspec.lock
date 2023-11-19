@@ -58,7 +58,7 @@ packages:
     source: hosted
     version: "1.5.1"
   amplify_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: amplify_core
       sha256: "123a6452f432a4df525ccdb129138d20dad9dc4115f22d02786ce9527deec53f"
@@ -413,6 +413,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: c247a4f76071c3b97bb5ae8912968870d5565644801c5e09f3bc961b4d874895
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.1.1"
   graphs:
     dependency: transitive
     description:

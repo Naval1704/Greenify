@@ -122,7 +122,7 @@ class _LobbyPageState extends State<LobbyPage> {
           physics: const NeverScrollableScrollPhysics(),
           children: <Widget>[
             Center(child: HomePage()),
-            Center(child: Home_Page()),
+            Center(child: CropDoctor()),
             Center(child: Tasks()),
           ],
         ),

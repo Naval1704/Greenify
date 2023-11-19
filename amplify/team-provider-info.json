@@ -39,5 +39,28 @@
         "S3AndCloudFront": {}
       }
     }
+  },
+  "greenify": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-greenify-greenify-210422-authRole",
+      "UnauthRoleArn": "arn:aws:iam::972451105760:role/amplify-greenify-greenify-210422-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::972451105760:role/amplify-greenify-greenify-210422-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-greenify-greenify-210422-deployment",
+      "UnauthRoleName": "amplify-greenify-greenify-210422-unauthRole",
+      "StackName": "amplify-greenify-greenify-210422",
+      "StackId": "arn:aws:cloudformation:ap-south-1:972451105760:stack/amplify-greenify-greenify-210422/1f069730-86f1-11ee-96e9-0aa2ecba6a9e",
+      "AmplifyAppId": "dps2ra5ds614r"
+    },
+    "categories": {
+      "auth": {
+        "greenifyb490cb10": {},
+        "green": {}
+      },
+      "function": {
+        "greenPostConfirmation": {},
+        "greenPreSignup": {}
+      }
+    }
   }
 }
