@@ -220,42 +220,42 @@ class _CropDoctorState extends State<CropDoctor> {
       // ),
       body: Stack(
         children: [
-        //   Center(
-        //     child: Padding(
-        //       padding: const EdgeInsets.all(20),
-        //       child: ListView.builder(
-        //         itemCount: list.length,
-        //         itemBuilder: (BuildContext context, int index) {
-        //           final item = list[index];
-        //           return ListTile(
-        //             onTap: () {
-        //               // getUrl(
-        //               //   key: item.key,
-        //               //   accessLevel: StorageAccessLevel.guest,
-        //               // );
-        //             },
-        //             title: Text(item.key),
-        //             trailing: IconButton(
-        //               icon: const Icon(Icons.delete),
-        //               onPressed: () {
-        //                 removeFile(
-        //                   key: item.key,
-        //                   accessLevel: StorageAccessLevel.guest,
-        //                 );
-        //               },
-        //               color: Colors.red,
-        //             ),
-        //             leading: IconButton(
-        //               icon: const Icon(Icons.download),
-        //               onPressed: () {
-        //                 downloadFileMobile(item.key);
-        //               },
-        //             ),
-        //           );
-        //         },
-        //       ),
-        //     ),
-        //   ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final item = list[index];
+                  return ListTile(
+                    onTap: () {
+                      // getUrl(
+                      //   key: item.key,
+                      //   accessLevel: StorageAccessLevel.guest,
+                      // );
+                    },
+                    title: Text(item.key),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        removeFile(
+                          key: item.key,
+                          accessLevel: StorageAccessLevel.guest,
+                        );
+                      },
+                      color: Colors.red,
+                    ),
+                    leading: IconButton(
+                      icon: const Icon(Icons.download),
+                      onPressed: () {
+                        downloadFileMobile(item.key);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           // display the image with the url
           if (imageUrl != '')
             Align(
