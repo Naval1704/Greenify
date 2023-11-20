@@ -229,10 +229,10 @@ class _CropDoctorState extends State<CropDoctor> {
                   final item = list[index];
                   return ListTile(
                     onTap: () {
-                      // getUrl(
-                      //   key: item.key,
-                      //   accessLevel: StorageAccessLevel.guest,
-                      // );
+                      getUrl(
+                        key: item.key,
+                        accessLevel: StorageAccessLevel.guest,
+                      );
                     },
                     title: Text(item.key),
                     trailing: IconButton(
