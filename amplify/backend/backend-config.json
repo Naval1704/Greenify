@@ -75,6 +75,64 @@
       "service": "S3AndCloudFront"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_greenPostConfirmation_GROUP": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_DOMAINALLOWLIST": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_DOMAINDENYLIST": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenPreSignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        }
+      ]
+    }
+  },
   "storage": {
     "greenify": {
       "dependsOn": [],
