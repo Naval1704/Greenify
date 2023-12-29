@@ -6,28 +6,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int count = 0;
-
-  void incrementCount() {
-    setState(() {
-      count += 1;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Count: $count',
+              'Greenify Home Page',
               style: TextStyle(fontSize: 24),
-            ),
-            ElevatedButton(
-              onPressed: incrementCount,
-              child: Text('Increment'),
             ),
           ],
         ),

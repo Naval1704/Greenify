@@ -1,18 +1,16 @@
-// import 'package:amplify_flutter/amplify_flutter.dart';
-// import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
-// import 'package:greenify/aws/uploadimage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-// import 'package:amplify_secure_storage/amplify_secure_storage.dart';
-// import 'package:greenify/amplifyconfiguration.dart';
-// import 'package:flutter/material.dart';
-// import 'package:go_router/go_router.dart';
 
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');
+
+class FormData {
+  String leafName = '';
+  String leafProblem = '';
+}
 
 class CropDoctor extends StatefulWidget {
   @override
@@ -22,6 +20,7 @@ class CropDoctor extends StatefulWidget {
 class _CropDoctorState extends State<CropDoctor> {
   List<StorageItem> list = [];
   var imageUrl = '';
+  FormData formData = FormData();
 
   @override
   void initState() {
@@ -29,7 +28,6 @@ class _CropDoctorState extends State<CropDoctor> {
     _listAllPublicFiles();
   }
 
-  // upload a file to the S3 bucket
   Future<void> _uploadFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -43,25 +41,36 @@ class _CropDoctorState extends State<CropDoctor> {
       return;
     }
 
-    final platformFile = result.files.single;
+    final imageFile = result.files.single;
 
+    // Open the form to enter leaf name and problem
+    bool? formSubmitted = await _showLeafFormDialog();
+
+    // Check if the form was submitted before uploading the file
+    if (formSubmitted == null || !formSubmitted) {
+      _logger.debug('Form canceled, not uploading file');
+      return;
+    }
+
+    // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
         localFile: AWSFile.fromStream(
-          platformFile.readStream!,
-          size: platformFile.size,
+          imageFile.readStream!,
+          size: imageFile.size,
         ),
-        key: platformFile.name,
+        key:
+            '${formData.leafName}_${formData.leafProblem}_${DateTime.now().millisecondsSinceEpoch}.${imageFile.extension}',
         onProgress: (p) =>
             _logger.debug('Uploading: ${p.transferredBytes}/${p.totalBytes}'),
       ).result;
+
       await _listAllPublicFiles();
     } on StorageException catch (e) {
       _logger.error('Error uploading file - ${e.message}');
     }
   }
 
-  // list all files in the S3 bucket
   Future<void> _listAllPublicFiles() async {
     try {
       final result = await Amplify.Storage.list(
@@ -78,7 +87,49 @@ class _CropDoctorState extends State<CropDoctor> {
     }
   }
 
-  // download file on mobile
+  Future<bool?> _showLeafFormDialog() async {
+    // Reset the formData object
+    formData = FormData();
+
+    return showDialog<bool?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Enter Leaf Information'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Leaf Name'),
+              onChanged: (value) {
+                formData.leafName = value;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Leaf Problem'),
+              onChanged: (value) {
+                formData.leafProblem = value;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(false); // Form canceled
+            },
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(true); // Form submitted
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> downloadFileMobile(String key) async {
     final documentsDir = await getApplicationDocumentsDirectory();
     final filename = key.split('/').last;
@@ -88,35 +139,27 @@ class _CropDoctorState extends State<CropDoctor> {
         key: key,
         localFile: AWSFile.fromPath(filepath),
         onProgress: (progress) {
-          safePrint('Fraction completed: ${progress.fractionCompleted}');
+          _logger.debug('Fraction completed: ${progress.fractionCompleted}');
         },
       ).result;
 
-      safePrint('Downloaded file is located at: ${result.localFile.path}');
+      _logger.debug('Downloaded file is located at: ${result.localFile.path}');
 
-      // Handle the downloaded file based on its type (generic, image, video)
       if (filename.endsWith('.jpg') ||
           filename.endsWith('.png') ||
           filename.endsWith('.jpeg')) {
         // Handle image file
-        // Example: Display the image using Flutter's Image.file widget
         // Image.file(File(result.localFile.path));
-      } else if (filename.endsWith('.mp4') || filename.endsWith('.mov')) {
-        // Handle video file
-        // Example: Play the video using Flutter's video_player package
-        // VideoPlayerController.file(File(result.localFile.path));
       } else {
         // Handle other file types if needed
       }
     } on StorageException catch (e) {
-      safePrint(e.message);
+      _logger.debug(e.message);
     }
   }
 
-  // download file on web
   Future<void> downloadFileWeb(String key) async {
-    final filename =
-        key.split('/').last; // Extracting the filename from the key
+    final filename = key.split('/').last;
     try {
       final result = await Amplify.Storage.downloadFile(
         key: key,
@@ -125,28 +168,21 @@ class _CropDoctorState extends State<CropDoctor> {
             .debug('Progress: ${(p0.transferredBytes / p0.totalBytes) * 100}%'),
       ).result;
 
-      // Handle the downloaded file based on its type (generic, image, video)
       if (filename.endsWith('.jpg') ||
           filename.endsWith('.png') ||
           filename.endsWith('.jpeg')) {
         // Handle image file
-        // Example: Display the image using Flutter's Image.network widget
         // Image.network(result.url);
-      } else if (filename.endsWith('.mp4') || filename.endsWith('.mov')) {
-        // Handle video file
-        // Example: Play the video using Flutter's video_player package
-        // VideoPlayerController.network(result.url);
       } else {
         // Handle other file types if needed
       }
 
       await _listAllPublicFiles();
     } on StorageException catch (e) {
-      _logger.error('Download error - ${e.message}');
+      _logger.debug('Download error - ${e.message}');
     }
   }
 
-  // delete file from S3 bucket
   Future<void> removeFile({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -157,16 +193,14 @@ class _CropDoctorState extends State<CropDoctor> {
         options: StorageRemoveOptions(accessLevel: accessLevel),
       ).result;
       setState(() {
-        // set the imageUrl to empty if the deleted file is the one being displayed
         imageUrl = '';
       });
       await _listAllPublicFiles();
     } on StorageException catch (e) {
-      _logger.error('Delete error - ${e.message}');
+      _logger.debug('Delete error - ${e.message}');
     }
   }
 
-  // get the url of a file in the S3 bucket
   Future<String> getUrl({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -187,37 +221,14 @@ class _CropDoctorState extends State<CropDoctor> {
       });
       return result.url.toString();
     } on StorageException catch (e) {
-      _logger.error('Get URL error - ${e.message}');
+      _logger.debug('Get URL error - ${e.message}');
       rethrow;
     }
   }
 
-  // final String imagesKey = 'pastImages';
-
-  // Future<void> openCamera() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.getImage(source: ImageSource.camera);
-  //   if (pickedFile != null) {
-  //     // Do something with the captured image (e.g., display it).
-  //     _uploadFile;
-  //   }
-  // }
-  //
-  // Future<void> openGallery() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.getImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     // Do something with the selected image (e.g., display it).
-  //     _uploadFile;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Crop Doctor'),
-      // ),
       body: Stack(
         children: [
           Center(
@@ -256,7 +267,6 @@ class _CropDoctorState extends State<CropDoctor> {
               ),
             ),
           ),
-          // display the image with the url
           if (imageUrl != '')
             Align(
               alignment: Alignment.bottomCenter,
@@ -265,14 +275,12 @@ class _CropDoctorState extends State<CropDoctor> {
                 child: Image.network(imageUrl, height: 200),
               ),
             ),
-          // upload file button
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: _uploadFile,
-                
                 child: const Text('Upload Image'),
               ),
             ),
@@ -282,80 +290,3 @@ class _CropDoctorState extends State<CropDoctor> {
     );
   }
 }
-
-// Future<void> listAlbum() async {
-//   try {
-//     String? nextToken;
-//     bool hasNextPage;
-//     do {
-//       final result = await Amplify.Storage.list(
-//         path: 'album/',
-//         options: StorageListOptions(
-//           accessLevel: StorageAccessLevel.private,
-//           pageSize: 50,
-//           nextToken: nextToken,
-//           pluginOptions: const S3ListPluginOptions(
-//             excludeSubPaths: true,
-//           ),
-//         ),
-//       ).result;
-//       safePrint('Listed items: ${result.items}');
-//       nextToken = result.nextToken;
-//       hasNextPage = result.hasNextPage;
-//     } while (hasNextPage);
-//   } on StorageException catch (e) {
-//     safePrint('Error listing files: ${e.message}');
-//     rethrow;
-//   }
-// }
-
-// import 'package:amplify_flutter/amplify.dart';
-// import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-
-// Future<String> getUrl({
-//   required String key,
-//   required StorageAccessLevel accessLevel,
-// }) async {
-//   try {
-//     final result = await Amplify.Storage.getUrl(
-//       key: key,
-//       options: StorageGetUrlOptions(
-//         accessLevel: accessLevel,
-//         pluginOptions: const S3GetUrlPluginOptions(
-//           validateObjectExistence: true,
-//           expiresIn: Duration(minutes: 1),
-//         ),
-//       ),
-//     ).result;
-//     setState(() {
-//       var imageUrl = result.url.toString();
-//     });
-//     return result.url.toString();
-//   } on StorageException catch (e) {
-//     var _logger;
-//     _logger.error('Get URL error - ${e.message}');
-//     rethrow;
-//   }
-// }
-
-// void setState(Null Function() param0) {}
-
-// import 'package:path_provider/path_provider.dart';
-//
-// Future<void> downloadToLocalFile(String key) async {
-//   final documentsDir = await getApplicationDocumentsDirectory();
-//   final filepath = documentsDir.path + '/example.txt';
-//   try {
-//     final result = await Amplify.Storage.downloadFile(
-//       key: key,
-//       localFile: AWSFile.fromPath(filepath),
-//       onProgress: (progress) {
-//         safePrint('Fraction completed: ${progress.fractionCompleted}');
-//       },
-//     ).result;
-//
-//     safePrint('Downloaded file is located at: ${result.localFile.path}');
-//   } on StorageException catch (e) {
-//     safePrint(e.message);
-//   }
-// }
