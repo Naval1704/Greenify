@@ -64,13 +64,13 @@ class _LobbyPage extends State<LobbyPage> {
             ],
           ),
           actions: <Widget>[
-            IconButton(
-              iconSize: 28,
-              icon: const Icon(Icons.notifications_none),
-              onPressed: () {
-                // Handle Notification button press
-              },
-            ),
+            // IconButton(
+            //   iconSize: 28,
+            //   icon: const Icon(Icons.notifications_none),
+            //   onPressed: () {
+            //     // Handle Notification button press
+            //   },
+            // ),
             IconButton(
               iconSize: 28,
               icon: const Icon(Icons.shopping_cart_outlined),
@@ -91,8 +91,8 @@ class _LobbyPage extends State<LobbyPage> {
                 icon: Icon(Icons.energy_savings_leaf),
               ),
               Tab(
-                text: 'Tasks',
-                icon: Icon(Icons.task),
+                text: 'Notifications',
+                icon: Icon(Icons.notifications),
               ),
             ],
           ),

@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'dart:io';
 
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');
 
@@ -29,6 +30,43 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   Future<void> _uploadFile() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text('Take a Photo'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _uploadFromCamera();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from Gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _uploadFromGallery();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _uploadFromCamera() async {
+    final image = await ImagePicker().getImage(source: ImageSource.camera);
+    if (image != null) {
+      await _processImageFile(File(image.path));
+    }
+  }
+
+  Future<void> _uploadFromGallery() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png'],
@@ -36,13 +74,12 @@ class _CropDoctorState extends State<CropDoctor> {
       withData: false,
     );
 
-    if (result == null) {
-      _logger.debug('No file selected');
-      return;
+    if (result != null) {
+      await _processImageFile(File(result.files.single.path!));
     }
+  }
 
-    final imageFile = result.files.single;
-
+  Future<void> _processImageFile(File imageFile) async {
     // Open the form to enter leaf name and problem
     bool? formSubmitted = await _showLeafFormDialog();
 
@@ -52,15 +89,18 @@ class _CropDoctorState extends State<CropDoctor> {
       return;
     }
 
+    // Remove numbers from the end of the leaf name
+    String sanitizedLeafName = formData.leafName;
+
+    // Generate a unique identifier using the current timestamp
+    String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
+
     // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
-        localFile: AWSFile.fromStream(
-          imageFile.readStream!,
-          size: imageFile.size,
-        ),
+        localFile: AWSFile.fromPath(imageFile.path),
         key:
-            '${formData.leafName}_${formData.leafProblem}_${DateTime.now().millisecondsSinceEpoch}.${imageFile.extension}',
+            '$sanitizedLeafName${formData.leafProblem}_$uniqueIdentifier.${imageFile.path.split('.').last}',
         onProgress: (p) =>
             _logger.debug('Uploading: ${p.transferredBytes}/${p.totalBytes}'),
       ).result;
