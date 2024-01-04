@@ -141,7 +141,7 @@ class _CropDoctorState extends State<CropDoctor> {
             TextFormField(
               decoration: InputDecoration(labelText: 'Leaf Name'),
               onChanged: (value) {
-                formData.leafName = value;
+                formData.leafName = value + '_';
               },
             ),
             TextFormField(

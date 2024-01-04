@@ -46,18 +46,10 @@ class _FarmerPageState extends State<FarmerPage> {
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
             backgroundColor: Colors.white,
+            brightness: Brightness.light,
           ),
         ).copyWith(
           indicatorColor: Colors.red,
-        ),
-        // set the dark theme (optional)
-        darkTheme: ThemeData.from(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.red,
-            backgroundColor: Colors.black,
-            brightness: Brightness.dark,
-          ),
         ),
         // set the theme mode to respond to the user's system preferences (optional)
         themeMode: ThemeMode.system,
