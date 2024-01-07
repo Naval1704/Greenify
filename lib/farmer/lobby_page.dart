@@ -47,7 +47,7 @@ class _LobbyPage extends State<LobbyPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
@@ -64,13 +64,6 @@ class _LobbyPage extends State<LobbyPage> {
             ],
           ),
           actions: <Widget>[
-            // IconButton(
-            //   iconSize: 28,
-            //   icon: const Icon(Icons.notifications_none),
-            //   onPressed: () {
-            //     // Handle Notification button press
-            //   },
-            // ),
             IconButton(
               iconSize: 28,
               icon: const Icon(Icons.shopping_cart_outlined),

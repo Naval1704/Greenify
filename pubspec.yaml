@@ -52,6 +52,7 @@ dependencies:
   photo_view: ^0.14.0
   image_picker: ^0.8.4+2
   permission_handler: ^11.0.1
+  carousel_slider: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +87,9 @@ flutter:
       - assets/watermark.png
       - assets/google.png
       - assets/meta.png
+      - assets/istockphoto-1151784210-612x612.jpg
+      - assets/plants-crops-maize-corn.jpg
+      - assets/rice-rice-seeds-agriculture-harvesting.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
