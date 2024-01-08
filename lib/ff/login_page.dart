@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
         children: [
           Container(
             color: Colors.redAccent
-                .withOpacity(0.2), // Set the background color with opacity
+                .withOpacity(0.1), // Set the background color with opacity
             width: double.infinity,
             height: double.infinity,
           ),
