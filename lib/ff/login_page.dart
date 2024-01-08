@@ -10,6 +10,12 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          Container(
+            color: Colors.redAccent
+                .withOpacity(0.2), // Set the background color with opacity
+            width: double.infinity,
+            height: double.infinity,
+          ),
           Positioned(
             bottom: 0,
             child: Container(
@@ -18,12 +24,9 @@ class LoginPage extends StatelessWidget {
                   0.36, // Adjust the height as needed
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      "assets/watermark.png"), // Replace with your pattern image
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                      Colors.white.withOpacity(0.5), BlendMode.dstOver),
-                ),
+                    image: AssetImage(
+                        "assets/watermark.png"), // Replace with your pattern image
+                    fit: BoxFit.cover),
               ),
             ),
           ),
@@ -34,17 +37,17 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Greenify',
                     style: TextStyle(
                       fontFamily: 'Aclonica',
-                      fontSize: 50,
+                      fontSize: 60,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 15),
+                  const Text(
                     'Who are you?',
                     style: TextStyle(
                       fontFamily: 'Aclonica',
