@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/ff/login_page.dart';
+import 'package:greenify/family/Sub-Pages/PendingTasks.dart';
 
 class _ExpertPageState extends StatelessWidget {
   const _ExpertPageState({super.key});
@@ -73,22 +74,9 @@ class _ExpertPage extends State<ExpertPage> {
               ),
             ],
           ),
-          // actions: <Widget>[
-          //   IconButton(
-          //     iconSize: 28,
-          //     icon: const Icon(Icons.shopping_cart_outlined),
-          //     onPressed: () {
-          //       // Handle Cart button press
-          //     },
-          //   ),
-          // ],
           bottom: const TabBar(
             indicatorColor: Colors.black,
             tabs: <Widget>[
-              // Tab(
-              //   text: 'Home',
-              //   icon: Icon(Icons.home_filled),
-              // ),
               Tab(
                 text: 'Pending Tasks',
                 icon: Icon(Icons.pending_actions_sharp),
@@ -100,10 +88,10 @@ class _ExpertPage extends State<ExpertPage> {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
             // Center(child: HomePage()),
-            // Center(child: CropDoctor()),
+            Center(child: PendingTasks()),
             // Center(child: Tasks()),
           ],
         ),
