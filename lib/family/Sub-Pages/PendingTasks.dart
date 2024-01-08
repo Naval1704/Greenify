@@ -127,6 +127,31 @@ class _PendingTasksState extends State<PendingTasks> {
     }
   }
 
+  Future<void> listAlbum() async {
+    try {
+      String? nextToken;
+      bool hasNextPage;
+      do {
+        final result = await Amplify.Storage.list(
+          path: 'album/',
+          options: StorageListOptions(
+            accessLevel: StorageAccessLevel.guest,
+            pageSize: 50,
+            nextToken: nextToken,
+            pluginOptions: const S3ListPluginOptions(
+              excludeSubPaths: true,
+            ),
+          ),
+        ).result;
+        safePrint('Listed items: ${result.items}');
+        nextToken = result.nextToken;
+        hasNextPage = result.hasNextPage;
+      } while (hasNextPage);
+    } on StorageException catch (e) {
+      safePrint('Error listing files: ${e.message}');
+      rethrow;
+    }
+  }
   // Future<bool?> _showLeafFormDialog() async {
   //   // Reset the formData object
   //   formData = FormData();
