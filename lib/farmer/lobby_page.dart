@@ -51,14 +51,27 @@ class _LobbyPage extends State<LobbyPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Row(
+          title: Row(
             children: [
               Text(
                 'Greenify',
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 25,
+                  color: Colors
+                      .redAccent, // Set the text color to a prominent color
+                  fontSize: 23, // Increase the font size for emphasis
                   fontWeight: FontWeight.bold,
+                  fontFamily:
+                      'Aclonica', // Use a specific font (ensure it's available)
+                  letterSpacing:
+                      1.2, // Add a slight letter spacing for better readability
+                  shadows: [
+                    Shadow(
+                      color: Colors.black
+                          .withOpacity(0.4), // Add a subtle shadow for depth
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                    ),
+                  ],
                 ),
               ),
             ],

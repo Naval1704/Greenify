@@ -73,7 +73,7 @@ class LoginPage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => FarmerPage()),
                       );
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.agriculture, color: Colors.white),

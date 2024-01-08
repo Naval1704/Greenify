@@ -2,7 +2,7 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:greenify/farmer/lobby_page.dart';
+import 'ExpertPage.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:greenify/amplifyconfiguration.dart';
 
@@ -33,7 +33,7 @@ class _FamilyPageState extends State<FamilyPage> {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const LobbyPage(),
+        builder: (context, state) => const ExpertPage(),
       ),
     ],
   );
@@ -47,8 +47,6 @@ class _FamilyPageState extends State<FamilyPage> {
             primarySwatch: Colors.red,
             backgroundColor: Colors.white,
             brightness: Brightness.light,
-            accentColor: Colors.redAccent,
-            cardColor: Colors.black87,
           ),
         ).copyWith(
           indicatorColor: Colors.red,
