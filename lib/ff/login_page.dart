@@ -8,77 +8,91 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('Login')),
-      // backgroundColor: Colors.green,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              // Gradient Background
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1EFF34),
-                  Color(0xFF47FF4B),
-                  Color(0xFF14FF00)
-                ],
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height *
+                  0.36, // Adjust the height as needed
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      "assets/watermark.png"), // Replace with your pattern image
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                      Colors.white.withOpacity(0.5), BlendMode.dstOver),
+                ),
               ),
             ),
-            child: Center(
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding: EdgeInsets.all(20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'Greenify',
                     style: TextStyle(
-                      fontFamily: 'Aclonica', // Use the 'Aclonica' font
+                      fontFamily: 'Aclonica',
                       fontSize: 50,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.red,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
+                  SizedBox(height: 20),
+                  Text(
                     'Who are you?',
                     style: TextStyle(
                       fontFamily: 'Aclonica',
-                      color: Colors.black,
+                      color: Colors.red,
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        primary: Colors.red, // Set the button color to red
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 16),
-                        shadowColor: Colors.black),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      primary: Colors.red,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shadowColor: Colors.black,
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => FarmerPage()),
                       );
                     },
-                    child: const Text(
-                      '    Farmer    ',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontFamily: 'Aclonica'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.agriculture, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'Farmer',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontFamily: 'Aclonica',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      primary: Colors.red, // Set the button color to red
+                      primary: Colors.red,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 16),
                     ),
@@ -88,30 +102,26 @@ class LoginPage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => FamilyPage()),
                       );
                     },
-                    child: const Text(
-                      '     Expert     ',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontFamily: 'Aclonica'),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Positioned.fill(
-                    right: -500,
-                    bottom: -400,
-                    child: Opacity(
-                      opacity: 0.9, // Adjust opacity as needed
-                      child: Image.asset(
-                        'assets/watermark.png', // Replace with your watermark image path
-                        fit: BoxFit.cover, // Adjust width as needed
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.people, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'Expert',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontFamily: 'Aclonica',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

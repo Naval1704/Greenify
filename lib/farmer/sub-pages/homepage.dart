@@ -8,25 +8,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> leafImages = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchImages();
-  }
-
-  Future<void> _fetchImages() async {
-    try {
-      List<MyImage> images = await Amplify.DataStore.query(MyImage.classType);
-
-      setState(() {
-        leafImages = images.map((image) => image.url).toList();
-      });
-    } catch (e) {
-      print("Error fetching images: $e");
-    }
-  }
+  List<String> leafImages = [
+    'assets/istockphoto-1151784210-612x612.jpg',
+    'assets/plants-crops-maize-corn.jpg',
+    'assets/rice-rice-seeds-agriculture-harvesting.jpg',
+    // Add more image paths as needed
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         image: DecorationImage(
-                          image: NetworkImage(imagePath),
+                          image: AssetImage(imagePath),
                           fit: BoxFit.cover,
                         ),
                       ),
