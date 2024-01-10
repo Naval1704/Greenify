@@ -1,4 +1,6 @@
 // import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -7,6 +9,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/aws/amplifyconfiguration.dart';
 import 'package:greenify/ff/login_page.dart';
 import 'package:greenify/ff/start_page.dart';
+import 'package:greenify/models/ModelProvider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +31,7 @@ class _MyAppState extends State<MyApp> {
 
   void _configureAmplify() async {
     try {
-      await Amplify.addPlugins([AmplifyAuthCognito(), AmplifyStorageS3()]);
+      await Amplify.addPlugins([AmplifyAuthCognito(), AmplifyStorageS3(),AmplifyDataStore(modelProvider:ModelProvider.instance)]);
       await Amplify.configure(amplifyconfig);
       safePrint('Successfully configured');
     } on Exception catch (e) {

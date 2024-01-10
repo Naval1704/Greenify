@@ -1,5 +1,6 @@
-type Todo @model @auth(rules: [{allow: private}]) {
+type LeafInfo @model @auth(rules: [{allow: private}]) {
   id: ID!
-  name: String!
-  description: String
-} 
+  leaf_name: String!
+  leaf_problem: String
+}
+ 

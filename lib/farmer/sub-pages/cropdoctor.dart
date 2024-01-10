@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenify/farmer/screens/leafscreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -104,6 +105,11 @@ class _CropDoctorState extends State<CropDoctor> {
         onProgress: (p) =>
             _logger.debug('Uploading: ${p.transferredBytes}/${p.totalBytes}'),
       ).result;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LeafScreen()), // Assuming LeafScreen is the name of your screen class
+      );
 
       await _listAllPublicFiles();
     } on StorageException catch (e) {

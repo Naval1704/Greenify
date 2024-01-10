@@ -29,7 +29,7 @@ class _SelectImageState extends State<SelectImage> {
   final bool _pickMultipleImages = false;
   bool _uploadInProgress = false;
   bool? _uploadSuccess;
-  var _storageAccessLevel = StorageAccessLevel.guest;
+  var _storageAccessLevel = StorageAccessLevel.private;
 
   @override
   void initState() {
