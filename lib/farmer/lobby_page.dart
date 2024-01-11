@@ -110,30 +110,30 @@ class _LobbyPage extends State<LobbyPage> {
             Center(child: Tasks()),
           ],
         ),
-        bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          indicatorColor: Colors.redAccent,
-          selectedIndex: currentPageIndex,
-          destinations: const <Widget>[
-            NavigationDestination(
-              selectedIcon: Icon(Icons.home_filled),
-              icon: Icon(Icons.home_filled),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.newspaper),
-              label: 'News',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.people_sharp),
-              label: 'Community',
-            ),
-          ],
-        ),
+        // bottomNavigationBar: NavigationBar(
+        //   onDestinationSelected: (int index) {
+        //     setState(() {
+        //       currentPageIndex = index;
+        //     });
+        //   },
+        //   indicatorColor: Colors.redAccent,
+        //   selectedIndex: currentPageIndex,
+        //   destinations: const <Widget>[
+        //     NavigationDestination(
+        //       selectedIcon: Icon(Icons.home_filled),
+        //       icon: Icon(Icons.home_filled),
+        //       label: 'Home',
+        //     ),
+        //     NavigationDestination(
+        //       icon: Icon(Icons.newspaper),
+        //       label: 'News',
+        //     ),
+        //     NavigationDestination(
+        //       icon: Icon(Icons.people_sharp),
+        //       label: 'Community',
+        //     ),
+        //   ],
+        // ),
         drawer: Drawer(
           child: FutureBuilder<AuthUser?>(
             future: getCurrentUser(),
