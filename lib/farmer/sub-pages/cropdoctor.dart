@@ -24,10 +24,15 @@ class _CropDoctorState extends State<CropDoctor> {
   var imageUrl = '';
   FormData formData = FormData();
 
+  List<String> imageKeys = [];
+  // List<StorageItem> list = [];
+  // var imageUrl = '';
+  List<String> urls = [];
+
   @override
   void initState() {
     super.initState();
-    _listAllPublicFiles();
+    _fetchImagesFromS3();
   }
 
   Future<void> _uploadFile() async {
@@ -108,28 +113,14 @@ class _CropDoctorState extends State<CropDoctor> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LeafScreen()), // Assuming LeafScreen is the name of your screen class
+        MaterialPageRoute(
+            builder: (context) =>
+                LeafScreen()), // Assuming LeafScreen is the name of your screen class
       );
 
-      await _listAllPublicFiles();
+      await _fetchImagesFromS3();
     } on StorageException catch (e) {
       _logger.error('Error uploading file - ${e.message}');
-    }
-  }
-
-  Future<void> _listAllPublicFiles() async {
-    try {
-      final result = await Amplify.Storage.list(
-        options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.guest,
-          pluginOptions: S3ListPluginOptions.listAll(),
-        ),
-      ).result;
-      setState(() {
-        list = result.items;
-      });
-    } on StorageException catch (e) {
-      _logger.error('List error - ${e.message}');
     }
   }
 
@@ -223,7 +214,7 @@ class _CropDoctorState extends State<CropDoctor> {
         // Handle other file types if needed
       }
 
-      await _listAllPublicFiles();
+      await _fetchImagesFromS3();
     } on StorageException catch (e) {
       _logger.debug('Download error - ${e.message}');
     }
@@ -241,7 +232,7 @@ class _CropDoctorState extends State<CropDoctor> {
       setState(() {
         imageUrl = '';
       });
-      await _listAllPublicFiles();
+      await _fetchImagesFromS3();
     } on StorageException catch (e) {
       _logger.debug('Delete error - ${e.message}');
     }
@@ -267,60 +258,169 @@ class _CropDoctorState extends State<CropDoctor> {
       });
       return result.url.toString();
     } on StorageException catch (e) {
-      _logger.debug('Get URL error - ${e.message}');
+      _logger.error('Get URL error - ${e.message}');
       rethrow;
     }
+  }
+
+  Future<void> _fetchImagesFromS3() async {
+    try {
+      final result = await Amplify.Storage.list(
+        options: const StorageListOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3ListPluginOptions.listAll(),
+        ),
+      ).result;
+      setState(() {
+        list = result.items;
+        imageKeys.clear();
+        urls.clear();
+      });
+      for (StorageItem item in list) {
+        if (item.key.endsWith('.jpg') || item.key.endsWith('.png')) {
+          setState(() {
+            imageKeys.add(item.key);
+          });
+        }
+      }
+      for (String i in imageKeys) {
+        final imageUrl =
+            await getUrl(key: i, accessLevel: StorageAccessLevel.guest);
+        print("URL: $imageUrl"); // For debugging
+        setState(() {
+          urls.add(imageUrl);
+        });
+      }
+    } catch (e) {
+      print("Error fetching images: $e");
+    }
+  }
+
+  void _showImageDetailsDialog(String imageUrl, String imageName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16.0),
+                ),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  imageName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = list[index];
-                  return ListTile(
-                    onTap: () {
-                      getUrl(
-                        key: item.key,
-                        accessLevel: StorageAccessLevel.guest,
-                      );
-                    },
-                    title: Text(item.key),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        removeFile(
-                          key: item.key,
-                          accessLevel: StorageAccessLevel.guest,
-                        );
-                      },
-                      color: Colors.red,
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+              ),
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = list[index];
+
+                // Ensure that the index is within bounds before accessing urls
+                if (index < urls.length) {
+                  return Card(
+                    elevation: 5.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
                     ),
-                    leading: IconButton(
-                      icon: const Icon(Icons.download),
-                      onPressed: () {
-                        downloadFileMobile(item.key);
+                    child: InkWell(
+                      onTap: () {
+                        _showImageDetailsDialog(urls[index], item.key);
                       },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(16.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Image.network(
+                                  urls[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(
+                              item.key,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  removeFile(
+                                    key: item.key,
+                                    accessLevel: StorageAccessLevel.guest,
+                                  );
+                                },
+                                color: Colors.red,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.download),
+                                onPressed: () {
+                                  downloadFileMobile(item.key);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
-                },
-              ),
+                } else {
+                  // Handle the case where the index is out of bounds
+                  return Container();
+                }
+              },
             ),
           ),
-          if (imageUrl != '')
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(80),
-                child: Image.network(imageUrl, height: 200),
-              ),
-            ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/ff/login_page.dart';
 import 'package:greenify/family/Sub-Pages/PendingTasks.dart';
+import 'package:greenify/family/Sub-Pages/CompletedTasks.dart';
 
 class _ExpertPageState extends StatelessWidget {
   const _ExpertPageState({super.key});
@@ -92,7 +93,7 @@ class _ExpertPage extends State<ExpertPage> {
           children: <Widget>[
             // Center(child: HomePage()),
             Center(child: PendingTasks()),
-            // Center(child: Tasks()),
+            Center(child: CompletedTasks()),
           ],
         ),
         bottomNavigationBar: NavigationBar(
@@ -150,7 +151,7 @@ class _ExpertPage extends State<ExpertPage> {
                             height: 10,
                           ),
                           Text(
-                            'email ID: $username',
+                            'mail ID: $username',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,

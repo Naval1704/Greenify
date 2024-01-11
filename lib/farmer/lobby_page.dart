@@ -154,8 +154,18 @@ class _LobbyPage extends State<LobbyPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const Text(
+                            'User Details:',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Text(
-                            'UserID: $username',
+                            'mail ID: $username',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
