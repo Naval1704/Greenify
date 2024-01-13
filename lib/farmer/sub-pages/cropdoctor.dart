@@ -321,7 +321,7 @@ class _CropDoctorState extends State<CropDoctor> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(15.0),
                 child: Text(
                   imageName,
                   style: TextStyle(
@@ -362,7 +362,7 @@ class _CropDoctorState extends State<CropDoctor> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        _showImageDetailsDialog(urls[index], item.key);
+                        _showImageDetailsDialog(urls[index], imageKeys[index]);
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -385,7 +385,7 @@ class _CropDoctorState extends State<CropDoctor> {
                           Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Text(
-                              item.key,
+                              imageKeys[index],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0,
