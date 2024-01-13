@@ -28,6 +28,7 @@ class _CropDoctorState extends State<CropDoctor> {
   List<String> imageKeys = [];
   // List<StorageItem> list = [];
   // var imageUrl = '';
+  String cropName = '';
   List<String> urls = [];
 
   @override
@@ -300,6 +301,12 @@ class _CropDoctorState extends State<CropDoctor> {
     }
   }
 
+  String _extractCropName(String key) {
+    // Assuming the format is "CropName_problem_timestamp.extension"
+    List<String> nameParts = key.split('_');
+    return nameParts[0];
+  }
+
   void _showImageDetailsDialog(String imageUrl, String imageName) {
     // Extracting information from imageName
     List<String> nameParts = imageName.split('_');
@@ -447,7 +454,7 @@ class _CropDoctorState extends State<CropDoctor> {
                           Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Text(
-                              imageKeys[index],
+                              _extractCropName(imageKeys[index]),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0,

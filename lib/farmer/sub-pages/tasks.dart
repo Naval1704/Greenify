@@ -76,6 +76,12 @@ class _TasksState extends State<Tasks> {
     }
   }
 
+  String _extractCropName(String key) {
+    // Assuming the format is "CropName_problem_timestamp.extension"
+    List<String> nameParts = key.split('_');
+    return nameParts[0];
+  }
+
   void _showImageDetailsDialog(String imageUrl, String imageName) {
     // Extracting information from imageName
     List<String> nameParts = imageName.split('_');
@@ -216,7 +222,8 @@ class _TasksState extends State<Tasks> {
                     Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Text(
-                        imageKeys[index], // Display image name
+                        _extractCropName(
+                            imageKeys[index]), // Display image name
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15.0,
