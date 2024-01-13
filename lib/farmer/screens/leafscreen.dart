@@ -86,10 +86,9 @@ class _LeafScreenState extends State<LeafScreen> {
               child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () async {
-                await createLeafInfo(_leafNameController.text, _leafProblemController.text);
-                Navigator.of(context)
-                    .pop(); // Close the dialog after creating leaf info
+              onPressed: () {
+                createLeafInfo(_leafNameController.text, _leafProblemController.text);
+                Navigator.of(context).pop(); // Close the dialog after creating leaf info
               },
               child: Text('Submit'),
             ),
@@ -100,23 +99,27 @@ class _LeafScreenState extends State<LeafScreen> {
   }
 
   Future<void> createLeafInfo(String name, String problem) async {
-    try {
-      LeafInfo model = LeafInfo(
-        leaf_name: name,
-        leaf_problem: problem,
-      );
-      final request = ModelMutations.create(model);
-      final response = await Amplify.API.mutate(request: request).response;
+    // try {
+    //   LeafInfo model = LeafInfo(
+    //     leaf_name: name,
+    //     leaf_problem: problem,
+    //   );
+    //   final request = ModelMutations.create(model);
+    //   final response = await Amplify.API.mutate(request: request).response;
 
-      final createdLeafInfo = response.data;
-      if (createdLeafInfo == null) {
-        print('errors: ${response.errors}');
-        return;
-      }
-      print('Mutation result: ${createdLeafInfo.id}');
-    } on ApiException catch (e) {
-      print('Mutation failed: $e');
-    }
+    //   final createdLeafInfo = response.data;
+    //   if (createdLeafInfo == null) {
+    //     print('errors: ${response.errors}');
+    //     return;
+    //   }
+    //   print('Mutation result: ${createdLeafInfo.id}');
+    // } on ApiException catch (e) {
+    //   print('Mutation failed: $e');
+    // }
+    final item = LeafInfo(
+		leaf_name: _leafNameController.text,
+		leaf_problem: _leafProblemController.text);
+await Amplify.DataStore.save(item);
   }
 
   // Implement the methods you provided in the earlier code section here

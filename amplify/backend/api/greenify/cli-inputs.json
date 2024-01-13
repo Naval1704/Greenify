@@ -14,12 +14,6 @@
     },
     "additionalAuthTypes": [
       {
-        "mode": "API_KEY",
-        "expirationTime": 30,
-        "apiKeyExpirationDate": "2024-02-08T21:54:04.384Z",
-        "keyDescription": "newapi"
-      },
-      {
         "mode": "AWS_IAM"
       }
     ]
