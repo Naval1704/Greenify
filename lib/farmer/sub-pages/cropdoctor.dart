@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenify/farmer/screens/leafscreen.dart';
+import 'package:greenify/upload.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -485,18 +486,27 @@ class _CropDoctorState extends State<CropDoctor> {
               },
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: ElevatedButton(
-                onPressed: _uploadFile,
-                child: const Text('Upload Image'),
-              ),
-            ),
-          ),
         ],
       ),
+      floatingActionButton: ElevatedButton.icon(
+        onPressed: _uploadFile,
+        icon: Icon(
+          Icons.upload,
+          color: Colors.white,
+        ),
+        label: Text(
+          'Upload',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
+        ),
+        style: ElevatedButton.styleFrom(
+          primary: Colors.redAccent,
+          minimumSize: Size(150, 50), // Set the minimum size
+          padding:
+              EdgeInsets.symmetric(horizontal: 10), // Set horizontal padding
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
