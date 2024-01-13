@@ -54,11 +54,15 @@ class _TasksState extends State<Tasks> {
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
+      // print("Result size: ${result.items.length}");
       setState(() {
         list = result.items;
       });
       for (StorageItem item in list) {
-        if (item.key.endsWith('.jpg') || item.key.endsWith('.png')) {
+        if (item.key.endsWith('.jpg') ||
+            item.key.endsWith('.png') ||
+            item.key.endsWith('.jpeg') ||
+            item.key.endsWith('.webp')) {
           setState(() {
             imageKeys.add(item.key);
           });

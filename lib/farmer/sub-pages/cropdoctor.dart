@@ -277,7 +277,10 @@ class _CropDoctorState extends State<CropDoctor> {
         urls.clear();
       });
       for (StorageItem item in list) {
-        if (item.key.endsWith('.jpg') || item.key.endsWith('.png')) {
+        if (item.key.endsWith('.jpg') ||
+            item.key.endsWith('.png') ||
+            item.key.endsWith('.jpeg') ||
+            item.key.endsWith('.webp')) {
           setState(() {
             imageKeys.add(item.key);
           });
@@ -346,7 +349,7 @@ class _CropDoctorState extends State<CropDoctor> {
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
               ),
-              itemCount: list.length,
+              itemCount: urls.length,
               itemBuilder: (BuildContext context, int index) {
                 final item = list[index];
 
@@ -380,7 +383,7 @@ class _CropDoctorState extends State<CropDoctor> {
                           ),
                           const SizedBox(height: 8.0),
                           Padding(
-                            padding: const EdgeInsets.all(1.0),
+                            padding: const EdgeInsets.all(2.0),
                             child: Text(
                               item.key,
                               style: TextStyle(
