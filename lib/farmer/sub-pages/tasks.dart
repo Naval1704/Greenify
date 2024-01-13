@@ -10,7 +10,6 @@ class Tasks extends StatefulWidget {
 class _TasksState extends State<Tasks> {
   List<String> imageKeys = [];
   List<StorageItem> list = [];
-  var imageUrl = '';
   List<String> urls = [];
 
   @override
@@ -34,31 +33,27 @@ class _TasksState extends State<Tasks> {
           ),
         ),
       ).result;
-      setState(() {
-        imageUrl = result.url.toString();
-      });
       return result.url.toString();
     } on StorageException catch (e) {
-      var _logger;
-      _logger.error('Get URL error - ${e.message}');
+      print('Get URL error - ${e.message}');
       rethrow;
     }
   }
 
   Future<void> _fetchImagesFromS3() async {
     try {
-      //  result = Amplify.Storage.list();
       final result = await Amplify.Storage.list(
-        options: const StorageListOptions(
+        options: StorageListOptions(
           accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
-      // print("Result size: ${result.items.length}");
+
       setState(() {
-        list = result.items;
+        list.addAll(result.items);
       });
-      for (StorageItem item in list) {
+
+      for (StorageItem item in result.items) {
         if (item.key.endsWith('.jpg') ||
             item.key.endsWith('.png') ||
             item.key.endsWith('.jpeg') ||
@@ -68,13 +63,10 @@ class _TasksState extends State<Tasks> {
           });
         }
       }
+
       for (String i in imageKeys) {
-        // imageUrl=getUrl(key: i, accessLevel: StorageAccessLevel.guest).toString();
-        // print("AAAAA:"+imageUrl);
-        // urls.add(imageUrl);
         final imageUrl =
             await getUrl(key: i, accessLevel: StorageAccessLevel.guest);
-        print("URL: $imageUrl"); // For debugging
         setState(() {
           urls.add(imageUrl);
         });
@@ -85,6 +77,15 @@ class _TasksState extends State<Tasks> {
   }
 
   void _showImageDetailsDialog(String imageUrl, String imageName) {
+    // Extracting information from imageName
+    List<String> nameParts = imageName.split('_');
+    String cropName = nameParts[0];
+    String problem = nameParts[1];
+
+    // Mock data for demonstration, replace it with actual solution and tips
+    String solutionByExpert = 'Expert solution goes here';
+    String additionalTips = 'Additional tips go here';
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -92,30 +93,82 @@ class _TasksState extends State<Tasks> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16.0),
-                ),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  imageName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.0),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Name of crop:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    cropName,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Problem:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    problem,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Solution by Expert:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    solutionByExpert,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Additional Tips:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    additionalTips,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -126,57 +179,57 @@ class _TasksState extends State<Tasks> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16.0,
-          mainAxisSpacing: 16.0,
-        ),
-        itemCount: urls.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              _showImageDetailsDialog(
-                urls[index],
-                imageKeys[index], // Pass the actual image name
-              );
-            },
-            child: Card(
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: ClipRRect(
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+          ),
+          itemCount: urls.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                _showImageDetailsDialog(
+                  urls[index],
+                  imageKeys[index], // Pass the actual image name
+                );
+              },
+              child: Card(
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ClipRRect(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(16.0),
                       ),
                       child: Image.network(
                         urls[index],
                         fit: BoxFit.cover,
+                        height: 120.0,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      imageKeys[index], // Display image name
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
+                    const SizedBox(height: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Text(
+                        imageKeys[index], // Display image name
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      )),
+            );
+          },
+        ),
+      ),
     );
   }
 }
