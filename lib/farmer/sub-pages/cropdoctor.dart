@@ -9,6 +9,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'dart:io';
 
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');
+final _formKey = GlobalKey<FormState>();
 
 class FormData {
   String leafName = '';
@@ -134,22 +135,37 @@ class _CropDoctorState extends State<CropDoctor> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Enter Leaf Information'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Leaf Name'),
-              onChanged: (value) {
-                formData.leafName = value + '_';
-              },
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Leaf Problem'),
-              onChanged: (value) {
-                formData.leafProblem = value;
-              },
-            ),
-          ],
+        content: Form(
+          key: _formKey, // Add a GlobalKey<FormState>
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Leaf Name'),
+                onChanged: (value) {
+                  formData.leafName = value + '_';
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Leaf Name is required';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Leaf Problem'),
+                onChanged: (value) {
+                  formData.leafProblem = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Leaf Problem is required';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           ElevatedButton(
@@ -160,7 +176,10 @@ class _CropDoctorState extends State<CropDoctor> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(true); // Form submitted
+              // Validate the form before allowing submission
+              if (_formKey.currentState!.validate()) {
+                Navigator.of(context).pop(true); // Form submitted
+              }
             },
             child: Text('Submit'),
           ),
@@ -409,91 +428,97 @@ class _CropDoctorState extends State<CropDoctor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-              ),
-              itemCount: urls.length,
-              itemBuilder: (BuildContext context, int index) {
-                final item = list[index];
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _fetchImagesFromS3();
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                ),
+                itemCount: urls.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final item = list[index];
 
-                // Ensure that the index is within bounds before accessing urls
-                if (index < urls.length) {
-                  return Card(
-                    elevation: 5.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        _showImageDetailsDialog(urls[index], imageKeys[index]);
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(16.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Image.network(
-                                  urls[index],
-                                  fit: BoxFit.cover,
+                  // Ensure that the index is within bounds before accessing urls
+                  if (index < urls.length) {
+                    return Card(
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          _showImageDetailsDialog(
+                              urls[index], imageKeys[index]);
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Image.network(
+                                    urls[index],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Text(
-                              _extractCropName(imageKeys[index]),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
+                            const SizedBox(height: 8.0),
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(
+                                _extractCropName(imageKeys[index]),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
                               ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  removeFile(
-                                    key: item.key,
-                                    accessLevel: StorageAccessLevel.guest,
-                                  );
-                                },
-                                color: Colors.red,
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.download),
-                                onPressed: () {
-                                  downloadFileMobile(item.key);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    removeFile(
+                                      key: item.key,
+                                      accessLevel: StorageAccessLevel.guest,
+                                    );
+                                  },
+                                  color: Colors.red,
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.download),
+                                  onPressed: () {
+                                    downloadFileMobile(item.key);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  // Handle the case where the index is out of bounds
-                  return Container();
-                }
-              },
+                    );
+                  } else {
+                    // Handle the case where the index is out of bounds
+                    return Container();
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: ElevatedButton.icon(
         onPressed: _uploadFile,
