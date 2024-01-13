@@ -387,35 +387,7 @@ class _CropDoctorState extends State<CropDoctor> {
                       fontSize: 16.0,
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'Solution by Expert:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  Text(
-                    solutionByExpert,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'Additional Tips:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  Text(
-                    additionalTips,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
+                  // SizedBox(height: 16.0),
                 ],
               ),
             ),
