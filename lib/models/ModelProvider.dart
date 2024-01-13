@@ -26,7 +26,7 @@ export 'LeafInfo.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "e1855abd6c58077b67d8d47082b65a3b";
+  String version = "baf14c3a2f87c94d916f49388bb0ef77";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [LeafInfo.schema];
   @override

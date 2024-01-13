@@ -11,9 +11,53 @@ import 'package:greenify/ff/login_page.dart';
 import 'package:greenify/ff/start_page.dart';
 import 'package:greenify/models/ModelProvider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await _configureAmplify();
   runApp(const MyApp());
 }
+
+ Future<void> _configureAmplify() async {
+    final authPlugin = AmplifyAuthCognito(
+      // FIXME: In your app, make sure to remove this line and set up
+      /// Keychain Sharing in Xcode as described in the docs:
+      /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
+      secureStorageFactory: AmplifySecureStorage.factoryFrom(
+        macOSOptions:
+            // ignore: invalid_use_of_visible_for_testing_member
+            MacOSSecureStorageOptions(useDataProtection: false),
+      ),
+    );
+    await Amplify.addPlugins([
+      authPlugin,AmplifyStorageS3(),AmplifyDataStore(modelProvider: ModelProvider.instance),AmplifyAPI(),
+      // FIXME: In your app, make sure to run `amplify codegen models` to generate
+      // the models and provider
+     
+    ]);
+
+    try {
+      await Amplify.configure(amplifyconfig);
+      // await Amplify.DataStore.clear(); 
+      await Future.delayed(const Duration(seconds: 1)); 
+      await Amplify.DataStore.start();
+    } on AmplifyAlreadyConfiguredException {
+      print(
+        'Amplify was already configured. Looks like app restarted on android.',
+      );
+    }
+    // setState(() {
+    //   _isAmplifyConfigured = true;
+    // });
+
+    Amplify.Hub.listen(
+      HubChannel.Api,
+      (ApiHubEvent event) {
+        if (event is SubscriptionHubEvent) {
+          safePrint(event);
+        }
+      },
+    );
+  }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -29,47 +73,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _configureAmplify();
+    // _configureAmplify();
   }
 
-  void _configureAmplify() async {
-    final authPlugin = AmplifyAuthCognito(
-      // FIXME: In your app, make sure to remove this line and set up
-      /// Keychain Sharing in Xcode as described in the docs:
-      /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
-      secureStorageFactory: AmplifySecureStorage.factoryFrom(
-        macOSOptions:
-            // ignore: invalid_use_of_visible_for_testing_member
-            MacOSSecureStorageOptions(useDataProtection: false),
-      ),
-    );
-    await Amplify.addPlugins([
-      authPlugin,AmplifyStorageS3(),AmplifyDataStore(modelProvider: ModelProvider.instance),
-      // FIXME: In your app, make sure to run `amplify codegen models` to generate
-      // the models and provider
-     
-    ]);
-
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      print(
-        'Amplify was already configured. Looks like app restarted on android.',
-      );
-    }
-    setState(() {
-      _isAmplifyConfigured = true;
-    });
-
-    Amplify.Hub.listen(
-      HubChannel.Api,
-      (ApiHubEvent event) {
-        if (event is SubscriptionHubEvent) {
-          safePrint(event);
-        }
-      },
-    );
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

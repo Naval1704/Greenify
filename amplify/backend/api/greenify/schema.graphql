@@ -1,5 +1,6 @@
 type LeafInfo @model @auth(rules: [{allow: private}]) {
   id: ID!
-  leaf_name: String!
-  leaf_problem: String
-} 
+  leafname: String
+  leafproblem: String
+}
+ 

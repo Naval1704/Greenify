@@ -27,8 +27,8 @@ import 'package:amplify_core/amplify_core.dart' as amplify_core;
 class LeafInfo extends amplify_core.Model {
   static const classType = const _LeafInfoModelType();
   final String id;
-  final String? _leaf_name;
-  final String? _leaf_problem;
+  final String? _leafname;
+  final String? _leafproblem;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -45,21 +45,12 @@ class LeafInfo extends amplify_core.Model {
       );
   }
   
-  String get leaf_name {
-    try {
-      return _leaf_name!;
-    } catch(e) {
-      throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get leafname {
+    return _leafname;
   }
   
-  String? get leaf_problem {
-    return _leaf_problem;
+  String? get leafproblem {
+    return _leafproblem;
   }
   
   amplify_core.TemporalDateTime? get createdAt {
@@ -70,13 +61,13 @@ class LeafInfo extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const LeafInfo._internal({required this.id, required leaf_name, leaf_problem, createdAt, updatedAt}): _leaf_name = leaf_name, _leaf_problem = leaf_problem, _createdAt = createdAt, _updatedAt = updatedAt;
+  const LeafInfo._internal({required this.id, leafname, leafproblem, createdAt, updatedAt}): _leafname = leafname, _leafproblem = leafproblem, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory LeafInfo({String? id, required String leaf_name, String? leaf_problem}) {
+  factory LeafInfo({String? id, String? leafname, String? leafproblem}) {
     return LeafInfo._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
-      leaf_name: leaf_name,
-      leaf_problem: leaf_problem);
+      leafname: leafname,
+      leafproblem: leafproblem);
   }
   
   bool equals(Object other) {
@@ -88,8 +79,8 @@ class LeafInfo extends amplify_core.Model {
     if (identical(other, this)) return true;
     return other is LeafInfo &&
       id == other.id &&
-      _leaf_name == other._leaf_name &&
-      _leaf_problem == other._leaf_problem;
+      _leafname == other._leafname &&
+      _leafproblem == other._leafproblem;
   }
   
   @override
@@ -101,8 +92,8 @@ class LeafInfo extends amplify_core.Model {
     
     buffer.write("LeafInfo {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("leaf_name=" + "$_leaf_name" + ", ");
-    buffer.write("leaf_problem=" + "$_leaf_problem" + ", ");
+    buffer.write("leafname=" + "$_leafname" + ", ");
+    buffer.write("leafproblem=" + "$_leafproblem" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -110,47 +101,47 @@ class LeafInfo extends amplify_core.Model {
     return buffer.toString();
   }
   
-  LeafInfo copyWith({String? leaf_name, String? leaf_problem}) {
+  LeafInfo copyWith({String? leafname, String? leafproblem}) {
     return LeafInfo._internal(
       id: id,
-      leaf_name: leaf_name ?? this.leaf_name,
-      leaf_problem: leaf_problem ?? this.leaf_problem);
+      leafname: leafname ?? this.leafname,
+      leafproblem: leafproblem ?? this.leafproblem);
   }
   
   LeafInfo copyWithModelFieldValues({
-    ModelFieldValue<String>? leaf_name,
-    ModelFieldValue<String?>? leaf_problem
+    ModelFieldValue<String?>? leafname,
+    ModelFieldValue<String?>? leafproblem
   }) {
     return LeafInfo._internal(
       id: id,
-      leaf_name: leaf_name == null ? this.leaf_name : leaf_name.value,
-      leaf_problem: leaf_problem == null ? this.leaf_problem : leaf_problem.value
+      leafname: leafname == null ? this.leafname : leafname.value,
+      leafproblem: leafproblem == null ? this.leafproblem : leafproblem.value
     );
   }
   
   LeafInfo.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _leaf_name = json['leaf_name'],
-      _leaf_problem = json['leaf_problem'],
+      _leafname = json['leafname'],
+      _leafproblem = json['leafproblem'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'leaf_name': _leaf_name, 'leaf_problem': _leaf_problem, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'leafname': _leafname, 'leafproblem': _leafproblem, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
-    'leaf_name': _leaf_name,
-    'leaf_problem': _leaf_problem,
+    'leafname': _leafname,
+    'leafproblem': _leafproblem,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
 
   static final amplify_core.QueryModelIdentifier<LeafInfoModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<LeafInfoModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
-  static final LEAF_NAME = amplify_core.QueryField(fieldName: "leaf_name");
-  static final LEAF_PROBLEM = amplify_core.QueryField(fieldName: "leaf_problem");
+  static final LEAFNAME = amplify_core.QueryField(fieldName: "leafname");
+  static final LEAFPROBLEM = amplify_core.QueryField(fieldName: "leafproblem");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "LeafInfo";
     modelSchemaDefinition.pluralName = "LeafInfos";
@@ -169,13 +160,13 @@ class LeafInfo extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: LeafInfo.LEAF_NAME,
-      isRequired: true,
+      key: LeafInfo.LEAFNAME,
+      isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: LeafInfo.LEAF_PROBLEM,
+      key: LeafInfo.LEAFPROBLEM,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));

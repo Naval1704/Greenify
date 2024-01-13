@@ -46,9 +46,9 @@ class _LeafScreenState extends State<LeafScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                List<LeafInfo?> items = await queryListItems();
+                // List<LeafInfo?> items = await queryListItems();
                 // Handle the items retrieved from the query as needed
-                print('List of Leaf Info: $items');
+                // print('List of Leaf Info: $items');
               },
               child: Text('Query Leaf Info List'),
             ),
@@ -87,8 +87,10 @@ class _LeafScreenState extends State<LeafScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                createLeafInfo(_leafNameController.text, _leafProblemController.text);
-                Navigator.of(context).pop(); // Close the dialog after creating leaf info
+                createLeafInfo(
+                    _leafNameController.text, _leafProblemController.text);
+                Navigator.of(context)
+                    .pop(); // Close the dialog after creating leaf info
               },
               child: Text('Submit'),
             ),
@@ -116,52 +118,56 @@ class _LeafScreenState extends State<LeafScreen> {
     // } on ApiException catch (e) {
     //   print('Mutation failed: $e');
     // }
+    // await Amplify.DataStore.start();
     final item = LeafInfo(
-		leaf_name: _leafNameController.text,
-		leaf_problem: _leafProblemController.text);
-await Amplify.DataStore.save(item);
+        leafname: "Lorem ipsum dolor sit amet",
+        leafproblem: "Lorem ipsum dolor sit amet",
+        );
+    await Amplify.DataStore.save(item);
+    // await Amplify.DataStore.clear();
   }
 
   // Implement the methods you provided in the earlier code section here
   // You can copy and paste them as is or refine them as needed.
 
-  Future<void> updateLeafInfo(LeafInfo originalLeafInfo) async {
-    final updatedModel = originalLeafInfo.copyWith(
-        leaf_name: "Lorem ipsum dolor sit amet",
-        leaf_problem: "Lorem ipsum dolor sit amet");
+//   Future<void> updateLeafInfo(LeafInfo originalLeafInfo) async {
+//     final updatedModel = originalLeafInfo.copyWith(
+//         leaf_name: "Lorem ipsum dolor sit amet",
+//         leaf_problem: "Lorem ipsum dolor sit amet");
 
-    final request = ModelMutations.update(updatedModel);
-    final response = await Amplify.API.mutate(request: request).response;
-    print('Response: $response');
-  }
+//     final request = ModelMutations.update(updatedModel);
+//     final response = await Amplify.API.mutate(request: request).response;
+//     print('Response: $response');
+//   }
 
-  Future<void> deleteLeafInfo(LeafInfo modelToDelete) async {
-    final request = ModelMutations.delete(modelToDelete);
-    final response = await Amplify.API.mutate(request: request).response;
-    print('Response: $response');
-  }
+//   Future<void> deleteLeafInfo(LeafInfo modelToDelete) async {
+//     final request = ModelMutations.delete(modelToDelete);
+//     final response = await Amplify.API.mutate(request: request).response;
+//     print('Response: $response');
+//   }
 
-// // or delete by ID, ideal if you do not have the instance in memory, yet
-// Future<void> deleteLeafInfoById(LeafInfo modelToDelete) async {
-//   final request = ModelMutations.deleteById(LeafInfo.classType, 'ENTER ID HERE');
-//   final response = await Amplify.API.mutate(request: request).response;
-//   print('Response: $response');
+// // // or delete by ID, ideal if you do not have the instance in memory, yet
+// // Future<void> deleteLeafInfoById(LeafInfo modelToDelete) async {
+// //   final request = ModelMutations.deleteById(LeafInfo.classType, 'ENTER ID HERE');
+// //   final response = await Amplify.API.mutate(request: request).response;
+// //   print('Response: $response');
+// // }
+
+//   Future<List<LeafInfo?>> queryListItems() async {
+//     try {
+//       final request = ModelQueries.list(LeafInfo.classType);
+//       final response = await Amplify.API.query(request: request).response;
+
+//       final items = response.data?.items;
+//       if (items == null) {
+//         print('errors: ${response.errors}');
+//         return <LeafInfo?>[];
+//       }
+//       return items;
+//     } on ApiException catch (e) {
+//       print('Query failed: $e');
+//     }
+//     return <LeafInfo?>[];
+//   }
 // }
-
-  Future<List<LeafInfo?>> queryListItems() async {
-    try {
-      final request = ModelQueries.list(LeafInfo.classType);
-      final response = await Amplify.API.query(request: request).response;
-
-      final items = response.data?.items;
-      if (items == null) {
-        print('errors: ${response.errors}');
-        return <LeafInfo?>[];
-      }
-      return items;
-    } on ApiException catch (e) {
-      print('Query failed: $e');
-    }
-    return <LeafInfo?>[];
-  }
 }
