@@ -20,20 +20,24 @@
         "greenPostConfirmation": {
           "GROUP": "green",
           "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
-          "s3Key": "amplify-builds/greenPostConfirmation-647245706952326d526a-build.zip"
+          "s3Key": "amplify-builds/greenPostConfirmation-6a583031355171695748-build.zip"
         },
         "greenPreSignup": {
           "DOMAINALLOWLIST": "gmail.com,iitj.ac.in",
           "DOMAINDENYLIST": "gmail.com",
           "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
-          "s3Key": "amplify-builds/greenPreSignup-70444b46547356533056-build.zip"
+          "s3Key": "amplify-builds/greenPreSignup-6953646d30756e536371-build.zip"
         }
       },
       "auth": {
-        "greenifyb490cb10": {}
+        "greenifyb490cb10": {},
+        "green": {}
       },
       "hosting": {
         "S3AndCloudFront": {}
+      },
+      "api": {
+        "greenify": {}
       }
     }
   },
