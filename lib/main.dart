@@ -18,22 +18,9 @@ Future<void> main() async {
 }
 
  Future<void> _configureAmplify() async {
-    final authPlugin = AmplifyAuthCognito(
-      // FIXME: In your app, make sure to remove this line and set up
-      /// Keychain Sharing in Xcode as described in the docs:
-      /// https://docs.amplify.aws/lib/project-setup/platform-setup/q/platform/flutter/#enable-keychain
-      secureStorageFactory: AmplifySecureStorage.factoryFrom(
-        macOSOptions:
-            // ignore: invalid_use_of_visible_for_testing_member
-            MacOSSecureStorageOptions(useDataProtection: false),
-      ),
-    );
+    final authPlugin = AmplifyAuthCognito();
     await Amplify.addPlugins([
-      authPlugin,AmplifyStorageS3(),AmplifyDataStore(modelProvider: ModelProvider.instance),AmplifyAPI(),
-      // FIXME: In your app, make sure to run `amplify codegen models` to generate
-      // the models and provider
-     
-    ]);
+      authPlugin,AmplifyStorageS3(),AmplifyAPI(),AmplifyDataStore(modelProvider: ModelProvider.instance)]);
 
     try {
       await Amplify.configure(amplifyconfig);

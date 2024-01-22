@@ -4,8 +4,7 @@
     "apiName": "greenify",
     "serviceName": "AppSync",
     "defaultAuthType": {
-      "mode": "AMAZON_COGNITO_USER_POOLS",
-      "cognitoUserPoolId": "authgreenifyb490cb10"
+      "mode": "AWS_IAM"
     },
     "conflictResolution": {
       "defaultResolutionStrategy": {
@@ -14,7 +13,8 @@
     },
     "additionalAuthTypes": [
       {
-        "mode": "AWS_IAM"
+        "mode": "AMAZON_COGNITO_USER_POOLS",
+        "cognitoUserPoolId": "authgreenifyb490cb10"
       }
     ]
   }

@@ -28,12 +28,9 @@ class _StartPageState extends State<StartPage> {
       body: Center(
         child: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1EFF34), Color(0xFF14FF00)],
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
+            color: Color.fromARGB(255, 254, 254, 254),
             ),
-          ),
+          
           child: Center(
             child: Image.asset(
               'assets/agriculture.png', // Replace with the actual asset path

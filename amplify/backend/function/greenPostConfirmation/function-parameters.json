@@ -12,5 +12,46 @@
   "triggerTemplate": "PostConfirmation.json.ejs",
   "triggerEventPath": "PostConfirmation.event.json",
   "roleName": "greenPostConfirmation",
-  "skipEdit": true
+  "skipEdit": true,
+  "permissions": {
+    "api": {
+      "greenify": [
+        "Query",
+        "Mutation",
+        "Subscription"
+      ]
+    },
+    "auth": {
+      "greenifyb490cb10": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    "function": {
+      "greenPreSignup": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    "hosting": {
+      "S3AndCloudFront": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    "storage": {
+      "LeafInfo:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  }
 }

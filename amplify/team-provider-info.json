@@ -9,35 +9,37 @@
       "UnauthRoleName": "amplify-greenify-dev-133643-unauthRole",
       "StackName": "amplify-greenify-dev-133643",
       "StackId": "arn:aws:cloudformation:ap-south-1:972451105760:stack/amplify-greenify-dev-133643/741d4690-64e8-11ee-ac1b-02af78724bbc",
-      "AmplifyAppId": "dps2ra5ds614r",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-greenify-dev-133643-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+      "AmplifyAppId": "dps2ra5ds614r"
     },
     "categories": {
-      "storage": {
-        "greenify": {}
-      },
       "function": {
         "greenPostConfirmation": {
           "GROUP": "green",
           "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
-          "s3Key": "amplify-builds/greenPostConfirmation-6a583031355171695748-build.zip"
+          "s3Key": "amplify-builds/greenPostConfirmation-2b39597637744a497870-build.zip"
         },
         "greenPreSignup": {
           "DOMAINALLOWLIST": "gmail.com,iitj.ac.in",
           "DOMAINDENYLIST": "gmail.com",
           "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
-          "s3Key": "amplify-builds/greenPreSignup-6953646d30756e536371-build.zip"
+          "s3Key": "amplify-builds/greenPreSignup-70444b46547356533056-build.zip"
+        },
+        "greenifyapicall": {
+          "deploymentBucketName": "amplify-greenify-dev-133643-deployment",
+          "s3Key": "amplify-builds/greenifyapicall-566b41706e5046433775-build.zip"
         }
       },
       "auth": {
-        "greenifyb490cb10": {},
-        "green": {}
+        "greenifyb490cb10": {}
       },
-      "hosting": {
-        "S3AndCloudFront": {}
+      "storage": {
+        "greenify": {}
       },
       "api": {
         "greenify": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   },
@@ -55,12 +57,10 @@
     },
     "categories": {
       "auth": {
-        "greenifyb490cb10": {},
-        "green": {}
+        "Greenify": {}
       },
-      "function": {
-        "greenPostConfirmation": {},
-        "greenPreSignup": {}
+      "storage": {
+        "s3greenifystoragenew": {}
       }
     }
   }

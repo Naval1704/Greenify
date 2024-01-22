@@ -21,18 +21,18 @@ packages:
     dependency: "direct main"
     description:
       name: amplify_api
-      sha256: "2b34a3fbbbe33f2027be11ff18070a4660295012beb5cd52a55a0ae71fa5d7f1"
+      sha256: a8e17883d992f8df035e7be5d44b200c54b1102c5f793f9357b3e916aea6e840
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.6.2"
   amplify_api_dart:
     dependency: transitive
     description:
       name: amplify_api_dart
-      sha256: "7677cd5b5148c66b9ef28d456d337b8468979f9c531c9301054260e1826646b3"
+      sha256: "0479ada6792a7e9631132edd76b551f8ec9b17488c8bae280038d992b9b13738"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.4"
   amplify_auth_cognito:
     dependency: "direct main"
     description:
@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: amplify_core
-      sha256: "123a6452f432a4df525ccdb129138d20dad9dc4115f22d02786ce9527deec53f"
+      sha256: "43cedb5831723a511d462d7bc7c500ac90ee4a9a8fbf76a06b0e45771f2e90f3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.6.2"
   amplify_datastore:
     dependency: "direct main"
     description:
@@ -101,10 +101,10 @@ packages:
     dependency: "direct main"
     description:
       name: amplify_flutter
-      sha256: "1210b57e81fd20ee06ee3feb62bcfb5a67225d1b76c91c2326156e8e8f8462a8"
+      sha256: "7a6e769486efbae39230950ba2fcb9b71848ab3dde479511779ffce3e95b9025"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.0"
+    version: "1.6.1"
   amplify_secure_storage:
     dependency: transitive
     description:
@@ -157,10 +157,10 @@ packages:
     dependency: transitive
     description:
       name: aws_common
-      sha256: "692b58b26fb2b98ccb029029b565b3d7bc95620bbb9ece2ad0c91194f57681f2"
+      sha256: "6a952cf6b9109ec38d6193b87772c46909df3789a051ce1e4393fab4b3afd785"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1"
+    version: "0.6.2"
   aws_signature_v4:
     dependency: transitive
     description:

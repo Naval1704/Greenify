@@ -14,14 +14,14 @@
         "authConfig": {
           "additionalAuthenticationProviders": [
             {
-              "authenticationType": "AWS_IAM"
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authgreenifyb490cb10"
+              }
             }
           ],
           "defaultAuthentication": {
-            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-            "userPoolConfig": {
-              "userPoolId": "authgreenifyb490cb10"
-            }
+            "authenticationType": "AWS_IAM"
           }
         }
       },
@@ -60,11 +60,57 @@
   "function": {
     "greenPostConfirmation": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "greenify"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "greenifyb490cb10"
+        },
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "greenPreSignup"
+        },
+        {
+          "attributes": [
+            "HostingBucketName"
+          ],
+          "category": "hosting",
+          "resourceName": "S3AndCloudFront"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "greenPreSignup": {
       "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "greenifyapicall": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "greenify"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
@@ -129,6 +175,22 @@
         {
           "category": "function",
           "resourceName": "greenPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenifyapicall_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenifyapicall"
+        }
+      ]
+    },
+    "AMPLIFY_function_greenifyapicall_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "greenifyapicall"
         }
       ]
     }
