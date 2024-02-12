@@ -26,7 +26,7 @@ class _TasksState extends State<Tasks> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: StorageGetUrlOptions(
-          accessLevel: accessLevel,
+          accessLevel: StorageAccessLevel.private,
           pluginOptions: const S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -44,7 +44,7 @@ class _TasksState extends State<Tasks> {
     try {
       final result = await Amplify.Storage.list(
         options: StorageListOptions(
-          accessLevel: StorageAccessLevel.guest,
+          accessLevel: StorageAccessLevel.private,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
@@ -66,7 +66,7 @@ class _TasksState extends State<Tasks> {
 
       for (String i in imageKeys) {
         final imageUrl =
-            await getUrl(key: i, accessLevel: StorageAccessLevel.guest);
+            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
         setState(() {
           urls.add(imageUrl);
         });

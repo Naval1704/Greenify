@@ -103,15 +103,18 @@ class _CropDoctorState extends State<CropDoctor> {
 
     // Generate a unique identifier using the current timestamp
     String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
+    const options = StorageUploadFileOptions(
+    accessLevel: StorageAccessLevel.private,
+  );
 
     // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
         localFile: AWSFile.fromPath(imageFile.path),
+        
         key:
             '$sanitizedLeafName${formData.leafProblem}_$uniqueIdentifier.${imageFile.path.split('.').last}',
-        onProgress: (p) =>
-            _logger.debug('Uploading: ${p.transferredBytes}/${p.totalBytes}'),
+        options: options,
       ).result;
 
       Navigator.push(
@@ -267,7 +270,7 @@ class _CropDoctorState extends State<CropDoctor> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: StorageGetUrlOptions(
-          accessLevel: accessLevel,
+          accessLevel: StorageAccessLevel.private,
           pluginOptions: const S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -288,7 +291,7 @@ class _CropDoctorState extends State<CropDoctor> {
     try {
       final result = await Amplify.Storage.list(
         options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.guest,
+          accessLevel: StorageAccessLevel.private,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
@@ -309,7 +312,7 @@ class _CropDoctorState extends State<CropDoctor> {
       }
       for (String i in imageKeys) {
         final imageUrl =
-            await getUrl(key: i, accessLevel: StorageAccessLevel.guest);
+            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
         print("URL: $imageUrl"); // For debugging
         setState(() {
           urls.add(imageUrl);

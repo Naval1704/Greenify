@@ -63,7 +63,7 @@ class _S3Handler extends State<S3Handler> {
     try {
       final result = await Amplify.Storage.list(
         options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.guest,
+          accessLevel: StorageAccessLevel.private,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
