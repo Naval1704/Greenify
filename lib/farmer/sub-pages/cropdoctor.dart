@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:greenify/farmer/screens/leafscreen.dart';
-import 'package:greenify/upload.dart';
+import 'package:greenify/mongo/mongodb.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,6 +7,8 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'dart:io';
 
+final TextEditingController leafProblemController = TextEditingController();
+final TextEditingController leafNameController = TextEditingController();
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');
 final _formKey = GlobalKey<FormState>();
 
@@ -27,8 +28,6 @@ class _CropDoctorState extends State<CropDoctor> {
   FormData formData = FormData();
 
   List<String> imageKeys = [];
-  // List<StorageItem> list = [];
-  // var imageUrl = '';
   String cropName = '';
   List<String> urls = [];
 
@@ -104,25 +103,17 @@ class _CropDoctorState extends State<CropDoctor> {
     // Generate a unique identifier using the current timestamp
     String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
     const options = StorageUploadFileOptions(
-    accessLevel: StorageAccessLevel.private,
-  );
+      accessLevel: StorageAccessLevel.private,
+    );
 
     // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
         localFile: AWSFile.fromPath(imageFile.path),
-        
         key:
             '$sanitizedLeafName${formData.leafProblem}_$uniqueIdentifier.${imageFile.path.split('.').last}',
         options: options,
       ).result;
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LeafScreen()), // Assuming LeafScreen is the name of your screen class
-      );
 
       await _fetchImagesFromS3();
     } on StorageException catch (e) {
@@ -131,20 +122,18 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   Future<bool?> _showLeafFormDialog() async {
-    // Reset the formData object
-    formData = FormData();
-
     return showDialog<bool?>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Enter Leaf Information'),
+        title: Text('Enter Leaf Data'),
         content: Form(
           key: _formKey, // Add a GlobalKey<FormState>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Leaf Name'),
+                controller: leafNameController,
+                decoration: const InputDecoration(labelText: 'Leaf Name'),
                 onChanged: (value) {
                   formData.leafName = value + '_';
                 },
@@ -156,13 +145,14 @@ class _CropDoctorState extends State<CropDoctor> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Leaf Problem'),
+                controller: leafProblemController,
+                decoration: const InputDecoration(labelText: 'Leaf Problem'),
                 onChanged: (value) {
-                  formData.leafProblem = value;
+                  formData.leafProblem = value + '_';
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Leaf Problem is required';
+                    return 'Leaf Name is required';
                   }
                   return null;
                 },
@@ -175,16 +165,20 @@ class _CropDoctorState extends State<CropDoctor> {
             onPressed: () {
               Navigator.of(context).pop(false); // Form canceled
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Validate the form before allowing submission
+            onPressed: () async {
+              // Call the function to insert data when the button is pressed
+              await MongoDatabase.insertLeafData(
+                leafProblemController.text,
+                leafNameController.text,
+              );
               if (_formKey.currentState!.validate()) {
-                Navigator.of(context).pop(true); // Form submitted
+                Navigator.of(context).pop(true);
               }
             },
-            child: Text('Submit'),
+            child: const Text('Submit'),
           ),
         ],
       ),
@@ -269,9 +263,9 @@ class _CropDoctorState extends State<CropDoctor> {
     try {
       final result = await Amplify.Storage.getUrl(
         key: key,
-        options: StorageGetUrlOptions(
+        options: const StorageGetUrlOptions(
           accessLevel: StorageAccessLevel.private,
-          pluginOptions: const S3GetUrlPluginOptions(
+          pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
           ),
@@ -468,7 +462,7 @@ class _CropDoctorState extends State<CropDoctor> {
                                   onPressed: () {
                                     removeFile(
                                       key: item.key,
-                                      accessLevel: StorageAccessLevel.guest,
+                                      accessLevel: StorageAccessLevel.private,
                                     );
                                   },
                                   color: Colors.red,
