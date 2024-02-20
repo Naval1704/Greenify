@@ -1,6 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
+import 'package:greenify/mongo/mongodb.dart';
 
 class Tasks extends StatefulWidget {
   @override
@@ -76,17 +77,46 @@ class _TasksState extends State<Tasks> {
     }
   }
 
-  String _extractCropName(String key) {
-    // Assuming the format is "CropName_problem_timestamp.extension"
-    List<String> nameParts = key.split('_');
-    return nameParts[0];
+  Future<String> _extractCropName(String imageKey) async {
+    // Extracting information from imageName
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
+
+    // Fetch leafName and leafProblem based on uniqueKey
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+
+    if (leafNameAndProblem != null) {
+      String leafName = leafNameAndProblem['leafname'];
+      return leafName;
+    } else {
+      return 'Leaf data not found for ID: $uniqueKey';
+    }
   }
 
-  void _showImageDetailsDialog(String imageUrl, String imageName) {
+  void _showImageDetailsDialog(
+      String imageUrl, String imageName, int index) async {
     // Extracting information from imageName
-    List<String> nameParts = imageName.split('_');
-    String cropName = nameParts[0];
-    String problem = nameParts[1];
+    List<String> nameParts = imageName.split('.');
+    String uniqueKey = nameParts[0];
+
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+    String leafProblem = "";
+    String leafName = "";
+
+    if (leafNameAndProblem != null) {
+      leafProblem = leafNameAndProblem['leafproblem'];
+      leafName = leafNameAndProblem['leafname'];
+    } else {
+      print('Leaf data not found for ID: $uniqueKey');
+    }
+
+    // Controllers for editing
+    TextEditingController cropNameController =
+        TextEditingController(text: leafName);
+    TextEditingController problemController =
+        TextEditingController(text: leafProblem);
 
     // Mock data for demonstration, replace it with actual solution and tips
     String solutionByExpert = 'Expert solution goes here';
@@ -124,7 +154,7 @@ class _TasksState extends State<Tasks> {
                     ),
                   ),
                   Text(
-                    cropName,
+                    leafName,
                     style: TextStyle(
                       fontSize: 16.0,
                     ),
@@ -138,7 +168,7 @@ class _TasksState extends State<Tasks> {
                     ),
                   ),
                   Text(
-                    problem,
+                    leafProblem,
                     style: TextStyle(
                       fontSize: 16.0,
                     ),
@@ -195,10 +225,9 @@ class _TasksState extends State<Tasks> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                _showImageDetailsDialog(
-                  urls[index],
-                  imageKeys[index], // Pass the actual image name
-                );
+                _showImageDetailsDialog(urls[index], imageKeys[index],
+                    index // Pass the actual image name
+                    );
               },
               child: Card(
                 elevation: 5.0,
@@ -221,13 +250,31 @@ class _TasksState extends State<Tasks> {
                     const SizedBox(height: 8.0),
                     Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Text(
-                        _extractCropName(
-                            imageKeys[index]), // Display image name
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0,
-                        ),
+                      child: FutureBuilder<String>(
+                        future: _extractCropName(imageKeys[index]),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasData) {
+                              return Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  snapshot.data!,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return const Text('Loading...');
+                            }
+                          } else {
+                            return const Text('Loading...');
+                          }
+                        },
                       ),
                     ),
                   ],
