@@ -89,16 +89,13 @@ class _CropDoctorState extends State<CropDoctor> {
 
   Future<void> _processImageFile(File imageFile) async {
     // Open the form to enter leaf name and problem
-    bool? formSubmitted = await _showLeafFormDialog();
+    bool? formSubmitted = await _showLeafFormDialog(imageFile);
 
-    // Check if the form was submitted before uploading the file
+    // Check if the form was submitted before processing the image file
     if (formSubmitted == null || !formSubmitted) {
       _logger.debug('Form canceled, not uploading file');
       return;
     }
-
-    // Remove numbers from the end of the leaf name
-    String sanitizedLeafName = formData.leafName;
 
     // Generate a unique identifier using the current timestamp
     String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
@@ -110,8 +107,7 @@ class _CropDoctorState extends State<CropDoctor> {
     try {
       await Amplify.Storage.uploadFile(
         localFile: AWSFile.fromPath(imageFile.path),
-        key:
-            '$sanitizedLeafName${formData.leafProblem}_$uniqueIdentifier.${imageFile.path.split('.').last}',
+        key: '$uniqueIdentifier.${imageFile.path.split('.').last}',
         options: options,
       ).result;
 
@@ -119,15 +115,28 @@ class _CropDoctorState extends State<CropDoctor> {
     } on StorageException catch (e) {
       _logger.error('Error uploading file - ${e.message}');
     }
+
+    // Call the function to insert data when the button is pressed
+    await MongoDatabase.insertLeafData(
+      uniqueIdentifier.toString(),
+      leafProblemController.text,
+      leafNameController.text,
+    );
+
+    if (_formKey.currentState!.validate()) {
+      leafNameController.clear();
+      leafProblemController.clear();
+      // Close the dialog or navigate away as needed
+    }
   }
 
-  Future<bool?> _showLeafFormDialog() async {
+  Future<bool?> _showLeafFormDialog(File imageFile) async {
     return showDialog<bool?>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Enter Leaf Data'),
         content: Form(
-          key: _formKey, // Add a GlobalKey<FormState>
+          key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -135,7 +144,7 @@ class _CropDoctorState extends State<CropDoctor> {
                 controller: leafNameController,
                 decoration: const InputDecoration(labelText: 'Leaf Name'),
                 onChanged: (value) {
-                  formData.leafName = value + '_';
+                  formData.leafName = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -148,7 +157,7 @@ class _CropDoctorState extends State<CropDoctor> {
                 controller: leafProblemController,
                 decoration: const InputDecoration(labelText: 'Leaf Problem'),
                 onChanged: (value) {
-                  formData.leafProblem = value + '_';
+                  formData.leafProblem = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -169,14 +178,7 @@ class _CropDoctorState extends State<CropDoctor> {
           ),
           ElevatedButton(
             onPressed: () async {
-              // Call the function to insert data when the button is pressed
-              await MongoDatabase.insertLeafData(
-                leafProblemController.text,
-                leafNameController.text,
-              );
-              if (_formKey.currentState!.validate()) {
-                Navigator.of(context).pop(true);
-              }
+              Navigator.of(context).pop(true); // Form submitted
             },
             child: const Text('Submit'),
           ),
@@ -317,21 +319,46 @@ class _CropDoctorState extends State<CropDoctor> {
     }
   }
 
-  String _extractCropName(String key) {
-    // Assuming the format is "CropName_problem_timestamp.extension"
-    List<String> nameParts = key.split('_');
-    return nameParts[0];
+  Future<String> _extractCropName(String imageKey) async {
+    // Extracting information from imageName
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
+
+    // Fetch leafName and leafProblem based on uniqueKey
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+
+    if (leafNameAndProblem != null) {
+      String leafName = leafNameAndProblem['leafname'];
+      return leafName;
+    } else {
+      return 'Leaf data not found for ID: $uniqueKey';
+    }
   }
 
-  void _showImageDetailsDialog(String imageUrl, String imageName) {
+  void _showImageDetailsDialog(
+      String imageUrl, String imageName, int index) async {
     // Extracting information from imageName
-    List<String> nameParts = imageName.split('_');
-    String cropName = nameParts[0];
-    String problem = nameParts[1];
+    List<String> nameParts = imageName.split('.');
+    String uniqueKey = nameParts[0];
 
-    // Mock data for demonstration, replace it with actual solution and tips
-    String solutionByExpert = 'Expert solution goes here';
-    String additionalTips = 'Additional tips go here';
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+    String leafProblem = "";
+    String leafName = "";
+
+    if (leafNameAndProblem != null) {
+      leafProblem = leafNameAndProblem['leafproblem'];
+      leafName = leafNameAndProblem['leafname'];
+    } else {
+      print('Leaf data not found for ID: $uniqueKey');
+    }
+
+    // Controllers for editing
+    TextEditingController cropNameController =
+        TextEditingController(text: leafName);
+    TextEditingController problemController =
+        TextEditingController(text: leafProblem);
 
     showDialog(
       context: context,
@@ -341,14 +368,14 @@ class _CropDoctorState extends State<CropDoctor> {
             borderRadius: BorderRadius.circular(16.0),
           ),
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16.0),
                     ),
                     child: Image.network(
@@ -356,35 +383,54 @@ class _CropDoctorState extends State<CropDoctor> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(height: 16.0),
-                  Text(
+                  const SizedBox(height: 16.0),
+                  const Text(
                     'Name of crop:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0,
                     ),
                   ),
-                  Text(
-                    cropName,
-                    style: TextStyle(
-                      fontSize: 16.0,
+                  TextFormField(
+                    controller: cropNameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter new crop name',
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
+                  const SizedBox(height: 8.0),
+                  const Text(
                     'Problem:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0,
                     ),
                   ),
-                  Text(
-                    problem,
-                    style: TextStyle(
-                      fontSize: 16.0,
+                  TextFormField(
+                    controller: problemController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter new problem',
                     ),
                   ),
-                  // SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Get the updated crop name and problem
+                      String updatedCropName = cropNameController.text;
+                      String updatedProblem = problemController.text;
+
+                      // Update data in the AWS backend
+                      await MongoDatabase.updateLeafData(
+                        leafProblem,
+                        leafName,
+                        updatedProblem,
+                        updatedCropName,
+                      );
+
+                      // Fetch images again to update the UI
+                      await _fetchImagesFromS3();
+                    },
+                    child: const Text('Update'),
+                  ),
                 ],
               ),
             ),
@@ -424,14 +470,14 @@ class _CropDoctorState extends State<CropDoctor> {
                       child: InkWell(
                         onTap: () {
                           _showImageDetailsDialog(
-                              urls[index], imageKeys[index]);
+                              urls[index], imageKeys[index], index);
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
                               child: ClipRRect(
-                                borderRadius: BorderRadius.vertical(
+                                borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(16.0),
                                 ),
                                 child: Padding(
@@ -446,12 +492,31 @@ class _CropDoctorState extends State<CropDoctor> {
                             const SizedBox(height: 8.0),
                             Padding(
                               padding: const EdgeInsets.all(2.0),
-                              child: Text(
-                                _extractCropName(imageKeys[index]),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                ),
+                              child: FutureBuilder<String>(
+                                future: _extractCropName(imageKeys[index]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    if (snapshot.hasData) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Text(
+                                          snapshot.data!,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return const Text('Loading...');
+                                    }
+                                  } else {
+                                    return const Text('Loading...');
+                                  }
+                                },
                               ),
                             ),
                             Row(
@@ -459,7 +524,12 @@ class _CropDoctorState extends State<CropDoctor> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.delete),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    List<String> nameParts =
+                                        item.key.toString().split('.');
+                                    String UniqueKey = nameParts[0];
+                                    await MongoDatabase.deleteLeafData(
+                                        UniqueKey);
                                     removeFile(
                                       key: item.key,
                                       accessLevel: StorageAccessLevel.private,
@@ -491,11 +561,11 @@ class _CropDoctorState extends State<CropDoctor> {
       ),
       floatingActionButton: ElevatedButton.icon(
         onPressed: _uploadFile,
-        icon: Icon(
+        icon: const Icon(
           Icons.upload,
           color: Colors.white,
         ),
-        label: Text(
+        label: const Text(
           'Upload',
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
