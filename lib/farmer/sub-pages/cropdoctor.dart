@@ -31,6 +31,8 @@ class _CropDoctorState extends State<CropDoctor> {
   String cropName = '';
   List<String> urls = [];
 
+  Map<String, dynamic>? get async => null;
+
   @override
   void initState() {
     super.initState();
@@ -360,8 +362,9 @@ class _CropDoctorState extends State<CropDoctor> {
     TextEditingController problemController =
         TextEditingController(text: leafProblem);
 
+    BuildContext localContext = context;
     showDialog(
-      context: context,
+      context: localContext,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
