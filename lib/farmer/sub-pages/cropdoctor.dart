@@ -495,12 +495,112 @@ class _CropDoctorState extends State<CropDoctor> {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(16.0),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Image.network(
-                                    urls[index],
-                                    fit: BoxFit.cover,
-                                  ),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
+                                      urls[index],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                    Positioned(
+                                      top: 8.0,
+                                      right: 8.0,
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () {
+                                            downloadFileMobile(item.key);
+                                          },
+                                          borderRadius: BorderRadius.circular(
+                                              20.0), // Adjust the radius as needed
+                                          child: Container(
+                                            padding: EdgeInsets.all(5.0),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                                  Colors.white.withOpacity(0.8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.download,
+                                              color: Colors
+                                                  .blue, // Set the color of the icon
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 8.0,
+                                      left: 8.0,
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            bool confirmDelete =
+                                                await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Confirm Deletion'),
+                                                  content: const Text(
+                                                    'Are you sure you want to delete this image?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(false);
+                                                      },
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(true);
+                                                      },
+                                                      child:
+                                                          const Text('Delete'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+
+                                            if (confirmDelete == true) {
+                                              List<String> nameParts = item.key
+                                                  .toString()
+                                                  .split('.');
+                                              String uniqueKey = nameParts[0];
+                                              await MongoDatabase
+                                                  .deleteLeafData(uniqueKey);
+                                              removeFile(
+                                                key: item.key,
+                                                accessLevel:
+                                                    StorageAccessLevel.private,
+                                              );
+                                            }
+                                          },
+                                          borderRadius: BorderRadius.circular(
+                                              20.0), // Adjust the radius as needed
+                                          child: Container(
+                                            padding: EdgeInsets.all(5.0),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                                  Colors.white.withOpacity(0.8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.delete,
+                                              color: Colors
+                                                  .red, // Set the color of the icon
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -534,63 +634,10 @@ class _CropDoctorState extends State<CropDoctor> {
                                 },
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () async {
-                                    // Show a confirmation dialog before deletion
-                                    bool confirmDelete = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Confirm Deletion'),
-                                          content: const Text(
-                                            'Are you sure you want to delete this image?',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(false);
-                                              },
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop(true);
-                                              },
-                                              child: const Text('Delete'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-
-                                    if (confirmDelete == true) {
-                                      List<String> nameParts =
-                                          item.key.toString().split('.');
-                                      String uniqueKey = nameParts[0];
-                                      await MongoDatabase.deleteLeafData(
-                                          uniqueKey);
-                                      removeFile(
-                                        key: item.key,
-                                        accessLevel: StorageAccessLevel.private,
-                                      );
-                                    }
-                                  },
-                                  color: Colors.red,
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.download),
-                                  onPressed: () {
-                                    downloadFileMobile(item.key);
-                                  },
-                                  color: Colors.blue,
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //
+                            // ),
                           ],
                         ),
                       ),
