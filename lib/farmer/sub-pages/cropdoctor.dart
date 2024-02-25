@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:greenify/mongo/mongodb.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,12 +11,14 @@ import 'dart:io';
 
 final TextEditingController leafProblemController = TextEditingController();
 final TextEditingController leafNameController = TextEditingController();
+final TextEditingController solutionController = TextEditingController();
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');
 final _formKey = GlobalKey<FormState>();
 
 class FormData {
   String leafName = '';
   String leafProblem = '';
+  String solution = '';
 }
 
 class CropDoctor extends StatefulWidget {
@@ -116,11 +120,14 @@ class _CropDoctorState extends State<CropDoctor> {
       _logger.error('Error uploading file - ${e.message}');
     }
 
+    solutionController.text = '';
+
     // Call the function to insert data when the button is pressed
     await MongoDatabase.insertLeafData(
       uniqueIdentifier.toString(),
       leafProblemController.text,
       leafNameController.text,
+      solutionController.text,
     );
 
     if (_formKey.currentState!.validate()) {
@@ -337,108 +344,114 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   void _showImageDetailsDialog(
-      String imageUrl, String imageName, int index) async {
-    // Extracting information from imageName
-    List<String> nameParts = imageName.split('.');
-    String uniqueKey = nameParts[0];
+    String imageUrl, String imageName, int index) async {
+  // Extracting information from imageName
+  List<String> nameParts = imageName.split('.');
+  String uniqueKey = nameParts[0];
 
-    Map<String, dynamic>? leafNameAndProblem =
-        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
-    String leafProblem = "";
-    String leafName = "";
+  Map<String, dynamic>? leafNameAndProblem =
+      await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+  String leafProblem = "";
+  String leafName = "";
 
-    if (leafNameAndProblem != null) {
-      leafProblem = leafNameAndProblem['leafproblem'];
-      leafName = leafNameAndProblem['leafname'];
-    } else {
-      print('Leaf data not found for ID: $uniqueKey');
-    }
+  if (leafNameAndProblem != null) {
+    leafProblem = leafNameAndProblem['leafproblem'];
+    leafName = leafNameAndProblem['leafname'];
+  } else {
+    print('Leaf data not found for ID: $uniqueKey');
+  }
 
-    // Controllers for editing
-    TextEditingController cropNameController =
-        TextEditingController(text: leafName);
-    TextEditingController problemController =
-        TextEditingController(text: leafProblem);
+  // Controllers for editing
+  TextEditingController cropNameController =
+      TextEditingController(text: leafName);
+  TextEditingController problemController =
+      TextEditingController(text: leafProblem);
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16.0),
-                    ),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    ),
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16.0),
                   ),
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Name of crop:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
                   ),
-                  TextFormField(
-                    controller: cropNameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter new crop name',
-                    ),
+                ),
+                const SizedBox(height: 16.0),
+                const Text(
+                  'Name of crop:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
                   ),
-                  const SizedBox(height: 8.0),
-                  const Text(
-                    'Problem:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
+                ),
+                TextFormField(
+                  controller: cropNameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter new crop name',
                   ),
-                  TextFormField(
-                    controller: problemController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter new problem',
-                    ),
+                ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  'Problem:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
                   ),
-                  const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // Get the updated crop name and problem
-                      String updatedCropName = cropNameController.text;
-                      String updatedProblem = problemController.text;
+                ),
+                TextFormField(
+                  controller: problemController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter new problem',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    // Get the updated crop name and problem
+                    String updatedCropName = cropNameController.text;
+                    String updatedProblem = problemController.text;
 
-                      // Update data in the AWS backend
-                      await MongoDatabase.updateLeafData(
-                        leafProblem,
-                        leafName,
-                        updatedProblem,
-                        updatedCropName,
-                      );
+                    // Close the dialog before making the asynchronous call
+                    Navigator.of(context).pop();
 
-                      // Fetch images again to update the UI
-                      await _fetchImagesFromS3();
-                    },
-                    child: const Text('Update'),
-                  ),
-                ],
-              ),
+                    // Update data in the AWS backend
+                    await MongoDatabase.updateData(
+                      leafName,
+                      leafProblem,
+                      updatedProblem,
+                      updatedCropName,
+                      '',
+                      // Pass the solution parameter as needed
+                    );
+
+                    // Fetch images again to update the UI
+                    await _fetchImagesFromS3();
+                  },
+                  child: const Text('Update'),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
