@@ -35,6 +35,8 @@ class _CropDoctorState extends State<CropDoctor> {
   String cropName = '';
   List<String> urls = [];
 
+  Map<String, dynamic>? get async => null;
+
   @override
   void initState() {
     super.initState();
