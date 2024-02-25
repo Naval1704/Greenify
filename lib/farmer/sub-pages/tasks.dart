@@ -270,10 +270,10 @@ class _TasksState extends State<Tasks> {
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else {
-                              return const CircularProgressIndicator(); // Loading indicator
+                              return Container();
                             }
                           } else {
-                            return const CircularProgressIndicator(); // Loading indicator
+                            return Container();
                           }
                         },
                       ),
