@@ -13,8 +13,8 @@ class MongoDatabase {
     collection = db!.collection(COLLECTION);
   }
 
-  static Future<void> insertLeafData(
-      String uniqueKey, String leafProblem, String leafName, String solution) async {
+  static Future<void> insertLeafData(String uniqueKey, String leafProblem,
+      String leafName, String solution) async {
     await collection.insertOne({
       '_id': uniqueKey,
       'leafproblem': leafProblem,
@@ -32,25 +32,43 @@ class MongoDatabase {
   }
 
   static Future<void> updateData(
-  String currentLeafName,
-  String currentLeafProblem,
-  String updatedLeafProblem,
-  String updatedLeafName,
-  String solution,
-) async {
-  try {
-    final response = await collection.update(
-      // Use leafName and leafProblem as the filter criteria
-      where.eq('leafname', currentLeafName).eq('leafproblem', currentLeafProblem),
-      modify.set('leafname', updatedLeafName).set('leafproblem', updatedLeafProblem).set('solution', solution),
-    );
+    String currentLeafName,
+    String currentLeafProblem,
+    String updatedLeafProblem,
+    String updatedLeafName,
+  ) async {
+    try {
+      final response = await collection.update(
+          // Use leafName and leafProblem as the filter criteria
+          where
+              .eq('leafname', currentLeafName)
+              .eq('leafproblem', currentLeafProblem),
+          modify
+              .set('leafname', updatedLeafName)
+              .set('leafproblem', updatedLeafProblem));
 
-    // _logger.debug('Updated ${response.nModified} document(s)');
-  } catch (e) {
-    // _logger.debug('Update error: $e');
+      // _logger.debug('Updated ${response.nModified} document(s)');
+    } catch (e) {
+      // _logger.debug('Update error: $e');
+    }
   }
-}
 
+  static Future<void> updateSolutions(
+    String uniqueKey,
+    String solution,
+  ) async {
+    try {
+      final response = await collection.update(
+        // Use leafName and leafProblem as the filter criteria
+        where.eq('_id', uniqueKey),
+        modify.set('solution', solution),
+      );
+
+      // _logger.debug('Updated ${response.nModified} document(s)');
+    } catch (e) {
+      // _logger.debug('Update error: $e');
+    }
+  }
 
   static Future<Map<String, dynamic>?> fetchLeafDataById(
       String uniqueKey) async {
@@ -63,8 +81,10 @@ class MongoDatabase {
 
     if (leafData != null) {
       return {
+        '_id': leafData['_id'],
         'leafname': leafData['leafname'],
         'leafproblem': leafData['leafproblem'],
+        'solution': leafData['solution'],
       };
     } else {
       return null;

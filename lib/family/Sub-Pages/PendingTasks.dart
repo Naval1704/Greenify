@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 // import 'package:mongo_dart/mongo_dart.dart';
 import 'package:greenify/mongo/mongodb.dart';
@@ -25,6 +23,8 @@ class _PendingTasks extends State<PendingTasks> {
   List<StorageItem> list = [];
   var imageUrl = '';
   FormData formData = FormData();
+  List<String> imageKeys = [];
+  List<String> urls = [];
 
   @override
   void initState() {
@@ -32,94 +32,20 @@ class _PendingTasks extends State<PendingTasks> {
     _fetchImagesFromS3();
   }
 
-  Future<void> _uploadFile() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.camera),
-                title: Text('Take a Photo'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await _uploadFromCamera();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await _uploadFromGallery();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  Future<String> _extractCropName(String imageKey) async {
+    // Extracting information from imageName
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
 
-  Future<void> _uploadFromCamera() async {
-    final image = await ImagePicker().getImage(source: ImageSource.camera);
-    if (image != null) {
-      await _processImageFile(File(image.path));
-    }
-  }
+    // Fetch leafName and leafProblem based on uniqueKey
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
 
-  Future<void> _uploadFromGallery() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png'],
-      withReadStream: true,
-      withData: false,
-    );
-
-    if (result != null) {
-      await _processImageFile(File(result.files.single.path!));
-    }
-  }
-
-  Future<void> _processImageFile(File imageFile) async {
-    // Open the form to enter solutions
-    bool? formSubmitted = await _showLeafFormDialog(imageFile);
-
-    // Check if the form was submitted before processing the image file
-    if (formSubmitted == null || !formSubmitted) {
-      _logger.debug('Form canceled, not uploading file');
-      return;
-    }
-
-    // Generate a unique identifier using the current timestamp
-    String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
-    const options = StorageUploadFileOptions(
-      accessLevel: StorageAccessLevel.private,
-    );
-
-    // After the form is submitted, upload the file
-    try {
-      await Amplify.Storage.uploadFile(
-        localFile: AWSFile.fromPath(imageFile.path),
-        key: '$uniqueIdentifier.${imageFile.path.split('.').last}',
-        options: options,
-      ).result;
-
-      await _fetchImagesFromS3();
-    } on StorageException catch (e) {
-      _logger.error('Error uploading file - ${e.message}');
-    }
-
-    // Call the function to insert data when the button is pressed
-    // await MongoDatabase.insertLeafData(
-    //   uniqueIdentifier.toString(),
-    //   solutionsController.text,
-    // );
-
-    if (_formKey.currentState!.validate()) {
-      solutionsController.clear();
-      // Close the dialog or navigate away as needed
+    if (leafNameAndProblem != null) {
+      String leafName = leafNameAndProblem['leafname'];
+      return leafName;
+    } else {
+      return 'Leaf data not found for ID: $uniqueKey';
     }
   }
 
@@ -273,10 +199,150 @@ class _PendingTasks extends State<PendingTasks> {
       ).result;
       setState(() {
         list = result.items;
+        imageKeys.clear();
+        urls.clear();
       });
+      for (StorageItem item in list) {
+        if (item.key.endsWith('.jpg') ||
+            item.key.endsWith('.png') ||
+            item.key.endsWith('.jpeg') ||
+            item.key.endsWith('.webp')) {
+          setState(() {
+            imageKeys.add(item.key);
+          });
+        }
+      }
+      for (String i in imageKeys) {
+        final imageUrl =
+            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
+        // print("URL: $imageUrl"); // For debugging
+        setState(() {
+          urls.add(imageUrl);
+        });
+      }
     } catch (e) {
       print("Error fetching images: $e");
     }
+  }
+
+  void _showImageDetailsDialog(
+      String imageUrl, String imageName, int index) async {
+    // Extracting information from imageName
+    List<String> nameParts = imageName.split('.');
+    String uniqueKey = nameParts[0];
+
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+    String leafProblem = "";
+    String leafName = "";
+    String solution = "";
+    String id = "";
+    if (leafNameAndProblem != null) {
+      id = leafNameAndProblem['_id'];
+      leafProblem = leafNameAndProblem['leafproblem'];
+      leafName = leafNameAndProblem['leafname'];
+      solution = leafNameAndProblem['solution'];
+    } else {
+      print('Leaf data not found for ID: $uniqueKey');
+    }
+
+    // Controllers for editing
+    TextEditingController solutionController =
+        TextEditingController(text: solution);
+    // TextEditingController problemController =
+    //     TextEditingController(text: leafProblem);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16.0),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Name of crop:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    leafName,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  const Text(
+                    'Problem:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(
+                    leafProblem,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Solution:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: solutionController,
+                    decoration: const InputDecoration(
+                      hintText: 'Write solution here!',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Get the updated crop name and problem
+                      String updatedSolutions = solutionController.text;
+
+                      // Close the dialog before making the asynchronous call
+                      Navigator.of(context).pop();
+
+                      // Update data in the AWS backend
+                      await MongoDatabase.updateSolutions(
+                        id,
+                        updatedSolutions,
+                      );
+                      // Fetch images again to update the UI
+                      // await _fetchImagesFromS3();
+                    },
+                    child: const Text('Update Solutions'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -295,66 +361,115 @@ class _PendingTasks extends State<PendingTasks> {
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
                 ),
-                itemCount: list.length,
+                padding: const EdgeInsets.all(10.0),
+                itemCount: urls.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = list[index];
 
-                  return Card(
-                    elevation: 5.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        // Handle card tap
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Image.network(
-                                  imageUrl, // You may need to update this with the correct URL
-                                  fit: BoxFit.cover,
+                  return Hero(
+                    tag: 'image$index', // Unique tag for each image
+                    child: Card(
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          _showImageDetailsDialog(
+                              urls[index], imageKeys[index], index);
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16.0),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
+                                      urls[index],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                    Positioned(
+                                      top: 8.0,
+                                      right: 8.0,
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () {
+                                            // Handle download
+                                            downloadFileMobile(item.key);
+                                          },
+                                          borderRadius: BorderRadius.circular(
+                                              20.0), // Adjust the radius as needed
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                                  Colors.white.withOpacity(0.8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.download,
+                                              color: Colors
+                                                  .blue, // Set the color of the icon
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Text(
-                              'Solutions: ${formData.solutions}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
+                            const SizedBox(height: 8.0),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: FutureBuilder<String>(
+                                future: _extractCropName(imageKeys[index]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    if (snapshot.hasData) {
+                                      return Text(
+                                        snapshot.data!,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                          color: Colors.black87,
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error: ${snapshot.error}',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                      );
+                                    } else {
+                                      return const Text(
+                                        'Loading...',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return const Text(
+                                      'Loading...',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  // Handle delete
-                                },
-                                color: Colors.red,
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.download),
-                                onPressed: () {
-                                  // Handle download
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -364,25 +479,6 @@ class _PendingTasks extends State<PendingTasks> {
           ],
         ),
       ),
-      floatingActionButton: ElevatedButton.icon(
-        onPressed: _uploadFile,
-        icon: const Icon(
-          Icons.upload,
-          color: Colors.white,
-        ),
-        label: const Text(
-          'Upload',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
-        ),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.redAccent,
-          minimumSize: Size(150, 50), // Set the minimum size
-          padding:
-              EdgeInsets.symmetric(horizontal: 10), // Set horizontal padding
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

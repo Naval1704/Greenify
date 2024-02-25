@@ -221,6 +221,7 @@ class _TasksState extends State<Tasks> {
             crossAxisSpacing: 16.0,
             mainAxisSpacing: 16.0,
           ),
+          padding: const EdgeInsets.all(10.0),
           itemCount: urls.length,
           itemBuilder: (context, index) {
             return InkWell(
@@ -269,10 +270,10 @@ class _TasksState extends State<Tasks> {
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else {
-                              return const Text('Loading...');
+                              return const CircularProgressIndicator(); // Loading indicator
                             }
                           } else {
-                            return const Text('Loading...');
+                            return const CircularProgressIndicator(); // Loading indicator
                           }
                         },
                       ),

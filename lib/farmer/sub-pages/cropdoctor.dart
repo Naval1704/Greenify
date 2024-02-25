@@ -318,7 +318,7 @@ class _CropDoctorState extends State<CropDoctor> {
       for (String i in imageKeys) {
         final imageUrl =
             await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-        print("URL: $imageUrl"); // For debugging
+        // print("URL: $imageUrl"); // For debugging
         setState(() {
           urls.add(imageUrl);
         });
@@ -346,114 +346,112 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   void _showImageDetailsDialog(
-    String imageUrl, String imageName, int index) async {
-  // Extracting information from imageName
-  List<String> nameParts = imageName.split('.');
-  String uniqueKey = nameParts[0];
+      String imageUrl, String imageName, int index) async {
+    // Extracting information from imageName
+    List<String> nameParts = imageName.split('.');
+    String uniqueKey = nameParts[0];
 
-  Map<String, dynamic>? leafNameAndProblem =
-      await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
-  String leafProblem = "";
-  String leafName = "";
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+    String leafProblem = "";
+    String leafName = "";
 
-  if (leafNameAndProblem != null) {
-    leafProblem = leafNameAndProblem['leafproblem'];
-    leafName = leafNameAndProblem['leafname'];
-  } else {
-    print('Leaf data not found for ID: $uniqueKey');
-  }
+    if (leafNameAndProblem != null) {
+      leafProblem = leafNameAndProblem['leafproblem'];
+      leafName = leafNameAndProblem['leafname'];
+    } else {
+      print('Leaf data not found for ID: $uniqueKey');
+    }
 
-  // Controllers for editing
-  TextEditingController cropNameController =
-      TextEditingController(text: leafName);
-  TextEditingController problemController =
-      TextEditingController(text: leafProblem);
+    // Controllers for editing
+    TextEditingController cropNameController =
+        TextEditingController(text: leafName);
+    TextEditingController problemController =
+        TextEditingController(text: leafProblem);
 
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16.0),
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16.0),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
+                  const SizedBox(height: 16.0),
+                  const Text(
+                    'Name of crop:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                const Text(
-                  'Name of crop:',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
+                  TextFormField(
+                    controller: cropNameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter new crop name',
+                    ),
                   ),
-                ),
-                TextFormField(
-                  controller: cropNameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter new crop name',
+                  const SizedBox(height: 8.0),
+                  const Text(
+                    'Problem:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8.0),
-                const Text(
-                  'Problem:',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
+                  TextFormField(
+                    controller: problemController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter new problem',
+                    ),
                   ),
-                ),
-                TextFormField(
-                  controller: problemController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter new problem',
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    // Get the updated crop name and problem
-                    String updatedCropName = cropNameController.text;
-                    String updatedProblem = problemController.text;
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Get the updated crop name and problem
+                      String updatedCropName = cropNameController.text;
+                      String updatedProblem = problemController.text;
 
-                    // Close the dialog before making the asynchronous call
-                    Navigator.of(context).pop();
+                      // Close the dialog before making the asynchronous call
+                      Navigator.of(context).pop();
 
-                    // Update data in the AWS backend
-                    await MongoDatabase.updateData(
-                      leafName,
-                      leafProblem,
-                      updatedProblem,
-                      updatedCropName,
-                      '',
-                      // Pass the solution parameter as needed
-                    );
+                      // Update data in the AWS backend
+                      await MongoDatabase.updateData(
+                        leafName,
+                        leafProblem,
+                        updatedProblem,
+                        updatedCropName,
+                        // Pass the solution parameter as needed
+                      );
 
-                    // Fetch images again to update the UI
-                    await _fetchImagesFromS3();
-                  },
-                  child: const Text('Update'),
-                ),
-              ],
+                      // Fetch images again to update the UI
+                      await _fetchImagesFromS3();
+                    },
+                    child: const Text('Update'),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -471,6 +469,7 @@ class _CropDoctorState extends State<CropDoctor> {
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
                 ),
+                padding: const EdgeInsets.all(10.0),
                 itemCount: urls.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = list[index];
@@ -482,6 +481,7 @@ class _CropDoctorState extends State<CropDoctor> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),
+                      color: Colors.white,
                       child: InkWell(
                         onTap: () {
                           _showImageDetailsDialog(
@@ -526,10 +526,10 @@ class _CropDoctorState extends State<CropDoctor> {
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else {
-                                      return const Text('Loading...');
+                                      return Container(); // Empty container when data is loading
                                     }
                                   } else {
-                                    return const Text('Loading...');
+                                    return Container(); // Empty container when data is loading
                                   }
                                 },
                               ),
@@ -540,15 +540,45 @@ class _CropDoctorState extends State<CropDoctor> {
                                 IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () async {
-                                    List<String> nameParts =
-                                        item.key.toString().split('.');
-                                    String UniqueKey = nameParts[0];
-                                    await MongoDatabase.deleteLeafData(
-                                        UniqueKey);
-                                    removeFile(
-                                      key: item.key,
-                                      accessLevel: StorageAccessLevel.private,
+                                    // Show a confirmation dialog before deletion
+                                    bool confirmDelete = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Confirm Deletion'),
+                                          content: const Text(
+                                            'Are you sure you want to delete this image?',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(false);
+                                              },
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true);
+                                              },
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
+
+                                    if (confirmDelete == true) {
+                                      List<String> nameParts =
+                                          item.key.toString().split('.');
+                                      String uniqueKey = nameParts[0];
+                                      await MongoDatabase.deleteLeafData(
+                                          uniqueKey);
+                                      removeFile(
+                                        key: item.key,
+                                        accessLevel: StorageAccessLevel.private,
+                                      );
+                                    }
                                   },
                                   color: Colors.red,
                                 ),
@@ -557,6 +587,7 @@ class _CropDoctorState extends State<CropDoctor> {
                                   onPressed: () {
                                     downloadFileMobile(item.key);
                                   },
+                                  color: Colors.blue,
                                 ),
                               ],
                             ),
@@ -574,23 +605,17 @@ class _CropDoctorState extends State<CropDoctor> {
           ],
         ),
       ),
-      floatingActionButton: ElevatedButton.icon(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _uploadFile,
-        icon: const Icon(
-          Icons.upload,
-          color: Colors.white,
-        ),
         label: const Text(
-          'Upload',
+          'Upload Image',
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.redAccent,
-          minimumSize: Size(150, 50), // Set the minimum size
-          padding:
-              EdgeInsets.symmetric(horizontal: 10), // Set horizontal padding
-        ),
+        icon: const Icon(Icons.cloud_upload),
+        backgroundColor: Colors.green,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
