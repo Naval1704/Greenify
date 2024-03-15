@@ -26,9 +26,9 @@ class _TasksState extends State<Tasks> {
     try {
       final result = await Amplify.Storage.getUrl(
         key: key,
-        options: StorageGetUrlOptions(
+        options: const StorageGetUrlOptions(
           accessLevel: StorageAccessLevel.private,
-          pluginOptions: const S3GetUrlPluginOptions(
+          pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
           ),
@@ -44,33 +44,38 @@ class _TasksState extends State<Tasks> {
   Future<void> _fetchImagesFromS3() async {
     try {
       final result = await Amplify.Storage.list(
-        options: StorageListOptions(
+        options: const StorageListOptions(
           accessLevel: StorageAccessLevel.private,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
-
       setState(() {
-        list.addAll(result.items);
+        list = result.items;
+        imageKeys.clear();
+        urls.clear();
       });
-
-      for (StorageItem item in result.items) {
+      for (StorageItem item in list) {
         if (item.key.endsWith('.jpg') ||
             item.key.endsWith('.png') ||
             item.key.endsWith('.jpeg') ||
             item.key.endsWith('.webp')) {
-          setState(() {
-            imageKeys.add(item.key);
-          });
+          bool checked = await checkedOrnot(item.key);
+          if (checked) {
+            setState(() {
+              imageKeys.add(item.key);
+            });
+          }
         }
       }
-
       for (String i in imageKeys) {
-        final imageUrl =
-            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-        setState(() {
-          urls.add(imageUrl);
-        });
+        bool checked = await checkedOrnot(i);
+        if (checked) {
+          final imageUrl =
+              await getUrl(key: i, accessLevel: StorageAccessLevel.private);
+          setState(() {
+            urls.add(imageUrl);
+          });
+        }
       }
     } catch (e) {
       print("Error fetching images: $e");
@@ -94,6 +99,21 @@ class _TasksState extends State<Tasks> {
     }
   }
 
+  Future<bool> checkedOrnot(String imageKey) async {
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+
+    if (leafNameAndProblem != null) {
+      bool checked = leafNameAndProblem['checked'];
+      return checked;
+    } else {
+      // Assuming leaf is not checked if data is not found
+      return false;
+    }
+  }
+
   void _showImageDetailsDialog(
       String imageUrl, String imageName, int index) async {
     // Extracting information from imageName
@@ -104,10 +124,12 @@ class _TasksState extends State<Tasks> {
         await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
     String leafProblem = "";
     String leafName = "";
+    String solutions = "";
 
     if (leafNameAndProblem != null) {
       leafProblem = leafNameAndProblem['leafproblem'];
       leafName = leafNameAndProblem['leafname'];
+      solutions = leafNameAndProblem['solution'];
     } else {
       print('Leaf data not found for ID: $uniqueKey');
     }
@@ -119,8 +141,7 @@ class _TasksState extends State<Tasks> {
         TextEditingController(text: leafProblem);
 
     // Mock data for demonstration, replace it with actual solution and tips
-    String solutionByExpert = 'Expert solution goes here';
-    String additionalTips = 'Additional tips go here';
+    String solutionByExpert = solutions;
 
     showDialog(
       context: context,
@@ -130,23 +151,24 @@ class _TasksState extends State<Tasks> {
             borderRadius: BorderRadius.circular(16.0),
           ),
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16.0),
                     ),
                     child: Image.network(
                       imageUrl,
+                      key: Key(imageUrl), // Add Key here
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(height: 16.0),
-                  Text(
+                  const SizedBox(height: 16.0),
+                  const Text(
                     'Name of crop:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -155,12 +177,12 @@ class _TasksState extends State<Tasks> {
                   ),
                   Text(
                     leafName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
+                  const SizedBox(height: 8.0),
+                  const Text(
                     'Problem:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -169,12 +191,12 @@ class _TasksState extends State<Tasks> {
                   ),
                   Text(
                     leafProblem,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
+                  const SizedBox(height: 8.0),
+                  const Text(
                     'Solution by Expert:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -188,20 +210,6 @@ class _TasksState extends State<Tasks> {
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  Text(
-                    'Additional Tips:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  Text(
-                    additionalTips,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
                 ],
               ),
             ),
@@ -216,7 +224,7 @@ class _TasksState extends State<Tasks> {
     return Scaffold(
       body: SafeArea(
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 16.0,
             mainAxisSpacing: 16.0,
@@ -226,9 +234,7 @@ class _TasksState extends State<Tasks> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                _showImageDetailsDialog(urls[index], imageKeys[index],
-                    index // Pass the actual image name
-                    );
+                _showImageDetailsDialog(urls[index], imageKeys[index], index);
               },
               child: Card(
                 elevation: 5.0,
@@ -244,6 +250,7 @@ class _TasksState extends State<Tasks> {
                       ),
                       child: Image.network(
                         urls[index],
+                        key: Key(urls[index]), // Add Key here
                         fit: BoxFit.cover,
                         height: 120.0,
                       ),

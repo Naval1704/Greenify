@@ -62,7 +62,7 @@ class LoginPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 16),
                       shadowColor: Colors.black,
@@ -95,7 +95,7 @@ class LoginPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 16),
                     ),
@@ -105,7 +105,7 @@ class LoginPage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => FamilyPage()),
                       );
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.people, color: Colors.white),

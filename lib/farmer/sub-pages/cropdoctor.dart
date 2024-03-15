@@ -128,6 +128,7 @@ class _CropDoctorState extends State<CropDoctor> {
       leafProblemController.text,
       leafNameController.text,
       solutionController.text,
+      false,
     );
 
     if (_formKey.currentState!.validate()) {
@@ -308,15 +309,20 @@ class _CropDoctorState extends State<CropDoctor> {
             item.key.endsWith('.png') ||
             item.key.endsWith('.jpeg') ||
             item.key.endsWith('.webp')) {
-          setState(() {
-            imageKeys.add(item.key);
-          });
+          bool checked =
+              await checkedOrnot(item.key); // Check the 'checked' status
+          if (!checked) {
+            setState(() {
+              imageKeys.add(item.key); // Add the key only if 'checked' is false
+            });
+          }
         }
       }
       for (String i in imageKeys) {
-        final imageUrl =
-            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-        // print("URL: $imageUrl"); // For debugging
+        final imageUrl = await getUrl(
+          key: i,
+          accessLevel: StorageAccessLevel.private,
+        );
         setState(() {
           urls.add(imageUrl);
         });
@@ -343,6 +349,21 @@ class _CropDoctorState extends State<CropDoctor> {
     }
   }
 
+  Future<bool> checkedOrnot(String imageKey) async {
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+
+    if (leafNameAndProblem != null) {
+      bool checked = leafNameAndProblem['checked'];
+      return checked;
+    } else {
+      // Assuming leaf is not checked if data is not found
+      return false;
+    }
+  }
+
   void _showImageDetailsDialog(
       String imageUrl, String imageName, int index) async {
     // Extracting information from imageName
@@ -353,10 +374,12 @@ class _CropDoctorState extends State<CropDoctor> {
         await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
     String leafProblem = "";
     String leafName = "";
+    bool check = false;
 
     if (leafNameAndProblem != null) {
       leafProblem = leafNameAndProblem['leafproblem'];
       leafName = leafNameAndProblem['leafname'];
+      check = leafNameAndProblem['checked'];
     } else {
       print('Leaf data not found for ID: $uniqueKey');
     }
@@ -436,7 +459,6 @@ class _CropDoctorState extends State<CropDoctor> {
                         updatedCropName,
                         // Pass the solution parameter as needed
                       );
-
                       // Fetch images again to update the UI
                       await _fetchImagesFromS3();
                     },
@@ -458,197 +480,212 @@ class _CropDoctorState extends State<CropDoctor> {
         onRefresh: () async {
           await _fetchImagesFromS3();
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
+        child: urls.isEmpty
+            ? const Center(
+                child: Text(
+                  'Upload the crop image',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                padding: const EdgeInsets.all(10.0),
-                itemCount: urls.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = list[index];
-
-                  // Ensure that the index is within bounds before accessing urls
-                  if (index < urls.length) {
-                    return Card(
-                      elevation: 5.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
                       ),
-                      color: Colors.white,
-                      child: InkWell(
-                        onTap: () {
-                          _showImageDetailsDialog(
-                              urls[index], imageKeys[index], index);
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(16.0),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      urls[index],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    ),
-                                    Positioned(
-                                      top: 8.0,
-                                      right: 8.0,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            downloadFileMobile(item.key);
-                                          },
-                                          borderRadius: BorderRadius.circular(
-                                              20.0), // Adjust the radius as needed
-                                          child: Container(
-                                            padding: EdgeInsets.all(5.0),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color:
-                                                  Colors.white.withOpacity(0.8),
-                                            ),
-                                            child: const Icon(
-                                              Icons.download,
-                                              color: Colors
-                                                  .blue, // Set the color of the icon
-                                            ),
-                                          ),
-                                        ),
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: urls.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = list[index];
+
+                        // Ensure that the index is within bounds before accessing urls
+                        if (index < urls.length) {
+                          return Card(
+                            elevation: 5.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            color: Colors.white,
+                            child: InkWell(
+                              onTap: () {
+                                _showImageDetailsDialog(
+                                    urls[index], imageKeys[index], index);
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(16.0),
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 8.0,
-                                      left: 8.0,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () async {
-                                            bool confirmDelete =
-                                                await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                      'Confirm Deletion'),
-                                                  content: const Text(
-                                                    'Are you sure you want to delete this image?',
+                                      child: Stack(
+                                        children: [
+                                          Image.network(
+                                            urls[index],
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
+                                          Positioned(
+                                            top: 8.0,
+                                            right: 8.0,
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  downloadFileMobile(item.key);
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(5.0),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.white
+                                                        .withOpacity(0.8),
                                                   ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(false);
-                                                      },
-                                                      child:
-                                                          const Text('Cancel'),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(true);
-                                                      },
-                                                      child:
-                                                          const Text('Delete'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-
-                                            if (confirmDelete == true) {
-                                              List<String> nameParts = item.key
-                                                  .toString()
-                                                  .split('.');
-                                              String uniqueKey = nameParts[0];
-                                              await MongoDatabase
-                                                  .deleteLeafData(uniqueKey);
-                                              removeFile(
-                                                key: item.key,
-                                                accessLevel:
-                                                    StorageAccessLevel.private,
-                                              );
-                                            }
-                                          },
-                                          borderRadius: BorderRadius.circular(
-                                              20.0), // Adjust the radius as needed
-                                          child: Container(
-                                            padding: EdgeInsets.all(5.0),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color:
-                                                  Colors.white.withOpacity(0.8),
-                                            ),
-                                            child: const Icon(
-                                              Icons.delete,
-                                              color: Colors
-                                                  .red, // Set the color of the icon
+                                                  child: const Icon(
+                                                    Icons.download,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                          Positioned(
+                                            top: 8.0,
+                                            left: 8.0,
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  bool confirmDelete =
+                                                      await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Confirm Deletion'),
+                                                        content: const Text(
+                                                          'Are you sure you want to delete this image?',
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(false);
+                                                            },
+                                                            child: const Text(
+                                                                'Cancel'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(true);
+                                                            },
+                                                            child: const Text(
+                                                                'Delete'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+
+                                                  if (confirmDelete == true) {
+                                                    List<String> nameParts =
+                                                        item.key
+                                                            .toString()
+                                                            .split('.');
+                                                    String uniqueKey =
+                                                        nameParts[0];
+                                                    await MongoDatabase
+                                                        .deleteLeafData(
+                                                            uniqueKey);
+                                                    removeFile(
+                                                      key: item.key,
+                                                      accessLevel:
+                                                          StorageAccessLevel
+                                                              .private,
+                                                    );
+                                                  }
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(5.0),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.white
+                                                        .withOpacity(0.8),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: FutureBuilder<String>(
+                                      future:
+                                          _extractCropName(imageKeys[index]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasData) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Text(
+                                                snapshot.data!,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                ),
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            return Container(); // Empty container when data is loading
+                                          }
+                                        } else {
+                                          return Container(); // Empty container when data is loading
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 8.0),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: FutureBuilder<String>(
-                                future: _extractCropName(imageKeys[index]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    if (snapshot.hasData) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Text(
-                                          snapshot.data!,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                          ),
-                                        ),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      return Container(); // Empty container when data is loading
-                                    }
-                                  } else {
-                                    return Container(); // Empty container when data is loading
-                                  }
-                                },
-                              ),
-                            ),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            //
-                            // ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    // Handle the case where the index is out of bounds
-                    return Container();
-                  }
-                },
+                          );
+                        } else {
+                          // Handle the case where the index is out of bounds
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _uploadFile,

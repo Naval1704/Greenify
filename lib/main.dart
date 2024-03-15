@@ -1,19 +1,14 @@
-// import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:greenify/aws/amplifyconfiguration.dart';
 import 'package:greenify/ff/login_page.dart';
 import 'package:greenify/ff/start_page.dart';
-import 'package:greenify/models/ModelProvider.dart';
-// import 'package:greenify/utils.dart';
 import 'mongo/mongodb.dart';
-// import 'package:mongo_dart/mongo_dart.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,19 +26,11 @@ Future<void> _configureAmplify() async {
 
   try {
     await Amplify.configure(amplifyconfig);
-    // await Amplify.DataStore.clear();
-    // await Future.delayed(const Duration(seconds: 1));
-    // await Amplify.DataStore.start();
   } on AmplifyAlreadyConfiguredException {
     print(
       'Amplify was already configured. Looks like app restarted on android.',
     );
   }
-  
-  // setState(() {
-  //   _isAmplifyConfigured = true;
-  // });
-
   Amplify.Hub.listen(
     HubChannel.Api,
     (ApiHubEvent event) {
@@ -62,7 +49,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
   bool _isAmplifyConfigured = false;
   bool _showRestApiView = true;
 
@@ -71,8 +57,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // _configureAmplify();
   }
-
- 
 
   @override
   Widget build(BuildContext context) {

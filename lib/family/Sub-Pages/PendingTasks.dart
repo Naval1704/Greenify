@@ -3,7 +3,6 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-// import 'package:mongo_dart/mongo_dart.dart';
 import 'package:greenify/mongo/mongodb.dart';
 
 final TextEditingController solutionsController = TextEditingController();
@@ -207,21 +206,41 @@ class _PendingTasks extends State<PendingTasks> {
             item.key.endsWith('.png') ||
             item.key.endsWith('.jpeg') ||
             item.key.endsWith('.webp')) {
-          setState(() {
-            imageKeys.add(item.key);
-          });
+          bool checked = await checkedOrnot(item.key);
+          if (!checked) {
+            setState(() {
+              imageKeys.add(item.key);
+            });
+          }
         }
       }
       for (String i in imageKeys) {
-        final imageUrl =
-            await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-        // print("URL: $imageUrl"); // For debugging
-        setState(() {
-          urls.add(imageUrl);
-        });
+        bool checked = await checkedOrnot(i);
+        if (!checked) {
+          final imageUrl =
+              await getUrl(key: i, accessLevel: StorageAccessLevel.private);
+          setState(() {
+            urls.add(imageUrl);
+          });
+        }
       }
     } catch (e) {
       print("Error fetching images: $e");
+    }
+  }
+
+  Future<bool> checkedOrnot(String imageKey) async {
+    List<String> keyParts = imageKey.split('.');
+    String uniqueKey = keyParts[0];
+    Map<String, dynamic>? leafNameAndProblem =
+        await MongoDatabase.fetchLeafNameAndProblemById(uniqueKey);
+
+    if (leafNameAndProblem != null) {
+      bool checked = leafNameAndProblem['checked'];
+      return checked;
+    } else {
+      // Assuming leaf is not checked if data is not found
+      return false;
     }
   }
 
@@ -237,11 +256,13 @@ class _PendingTasks extends State<PendingTasks> {
     String leafName = "";
     String solution = "";
     String id = "";
+    bool check = false;
     if (leafNameAndProblem != null) {
       id = leafNameAndProblem['_id'];
       leafProblem = leafNameAndProblem['leafproblem'];
       leafName = leafNameAndProblem['leafname'];
       solution = leafNameAndProblem['solution'];
+      check = leafNameAndProblem['checked'];
     } else {
       print('Leaf data not found for ID: $uniqueKey');
     }
@@ -320,6 +341,7 @@ class _PendingTasks extends State<PendingTasks> {
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () async {
+                      check = true;
                       // Get the updated crop name and problem
                       String updatedSolutions = solutionController.text;
 
@@ -330,6 +352,7 @@ class _PendingTasks extends State<PendingTasks> {
                       await MongoDatabase.updateSolutions(
                         id,
                         updatedSolutions,
+                        check,
                       );
                       // Fetch images again to update the UI
                       // await _fetchImagesFromS3();
@@ -352,132 +375,141 @@ class _PendingTasks extends State<PendingTasks> {
         onRefresh: () async {
           await _fetchImagesFromS3();
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
+        child: urls.isEmpty
+            ? const Center(
+                child: Text(
+                  'There are no pending tasks',
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
-                padding: const EdgeInsets.all(10.0),
-                itemCount: urls.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = list[index];
-
-                  return Hero(
-                    tag: 'image$index', // Unique tag for each image
-                    child: Card(
-                      elevation: 5.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
                       ),
-                      child: InkWell(
-                        onTap: () {
-                          _showImageDetailsDialog(
-                              urls[index], imageKeys[index], index);
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(16.0),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      urls[index],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    ),
-                                    Positioned(
-                                      top: 8.0,
-                                      right: 8.0,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            // Handle download
-                                            downloadFileMobile(item.key);
-                                          },
-                                          borderRadius: BorderRadius.circular(
-                                              20.0), // Adjust the radius as needed
-                                          child: Container(
-                                            padding: EdgeInsets.all(8.0),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color:
-                                                  Colors.white.withOpacity(0.8),
-                                            ),
-                                            child: const Icon(
-                                              Icons.download,
-                                              color: Colors
-                                                  .blue, // Set the color of the icon
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: urls.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = list[index];
+
+                        return Hero(
+                          tag: 'image$index', // Unique tag for each image
+                          child: Card(
+                            elevation: 5.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                _showImageDetailsDialog(
+                                    urls[index], imageKeys[index], index);
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16.0),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Image.network(
+                                            urls[index],
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
+                                          Positioned(
+                                            top: 8.0,
+                                            right: 8.0,
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  // Handle download
+                                                  downloadFileMobile(item.key);
+                                                },
+                                                borderRadius: BorderRadius.circular(
+                                                    20.0), // Adjust the radius as needed
+                                                child: Container(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.white
+                                                        .withOpacity(0.8),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.download,
+                                                    color: Colors
+                                                        .blue, // Set the color of the icon
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FutureBuilder<String>(
+                                      future:
+                                          _extractCropName(imageKeys[index]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          if (snapshot.hasData) {
+                                            return Text(
+                                              snapshot.data!,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,
+                                                color: Colors.black87,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                              'Error: ${snapshot.error}',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            );
+                                          } else {
+                                            return const Text(
+                                              'Loading...',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          return const Text(
+                                            'Loading...',
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 8.0),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: FutureBuilder<String>(
-                                future: _extractCropName(imageKeys[index]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    if (snapshot.hasData) {
-                                      return Text(
-                                        snapshot.data!,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.0,
-                                          color: Colors.black87,
-                                        ),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Error: ${snapshot.error}',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      );
-                                    } else {
-                                      return const Text(
-                                        'Loading...',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    return const Text(
-                                      'Loading...',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

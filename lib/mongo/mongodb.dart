@@ -14,12 +14,13 @@ class MongoDatabase {
   }
 
   static Future<void> insertLeafData(String uniqueKey, String leafProblem,
-      String leafName, String solution) async {
+      String leafName, String solution, bool checked) async {
     await collection.insertOne({
       '_id': uniqueKey,
       'leafproblem': leafProblem,
       'leafname': leafName,
-      'solution': solution
+      'solution': solution,
+      'checked': checked,
     });
     print(await collection.find().toList());
   }
@@ -56,17 +57,19 @@ class MongoDatabase {
   static Future<void> updateSolutions(
     String uniqueKey,
     String solution,
+    bool checkUpdated,
   ) async {
     try {
       final response = await collection.update(
-        // Use leafName and leafProblem as the filter criteria
+        // Use uniqueKey as the filter criteria
         where.eq('_id', uniqueKey),
-        modify.set('solution', solution),
+        modify
+            .set('solution', solution) // Update solution field
+            .set('checked', checkUpdated), // Update checked field
       );
-
-      // _logger.debug('Updated ${response.nModified} document(s)');
     } catch (e) {
-      // _logger.debug('Update error: $e');
+      // Handle update error
+      print('Update error: $e');
     }
   }
 
@@ -85,6 +88,7 @@ class MongoDatabase {
         'leafname': leafData['leafname'],
         'leafproblem': leafData['leafproblem'],
         'solution': leafData['solution'],
+        'checked': leafData['checked'],
       };
     } else {
       return null;
