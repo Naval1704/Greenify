@@ -48,50 +48,6 @@ class _CompletedTasks extends State<CompletedTasks> {
     }
   }
 
-  Future<bool?> _showLeafFormDialog(File imageFile) async {
-    return showDialog<bool?>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Enter Leaf Data'),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: solutionsController,
-                decoration: const InputDecoration(labelText: 'Solutions'),
-                onChanged: (value) {
-                  formData.solutions = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Solutions are required';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(false); // Form canceled
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop(true); // Form submitted
-            },
-            child: const Text('Submit'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> downloadFileMobile(String key) async {
     final documentsDir = await getApplicationDocumentsDirectory();
     final filename = key.split('/').last;
@@ -142,24 +98,6 @@ class _CompletedTasks extends State<CompletedTasks> {
       await _fetchImagesFromS3();
     } on StorageException catch (e) {
       _logger.debug('Download error - ${e.message}');
-    }
-  }
-
-  Future<void> removeFile({
-    required String key,
-    required StorageAccessLevel accessLevel,
-  }) async {
-    try {
-      await Amplify.Storage.remove(
-        key: key,
-        options: StorageRemoveOptions(accessLevel: accessLevel),
-      ).result;
-      setState(() {
-        imageUrl = '';
-      });
-      await _fetchImagesFromS3();
-    } on StorageException catch (e) {
-      _logger.debug('Delete error - ${e.message}');
     }
   }
 
@@ -306,7 +244,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                   ),
                   Text(
                     leafName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                     ),
                   ),
@@ -320,7 +258,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                   ),
                   Text(
                     leafProblem,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                     ),
                   ),
@@ -354,8 +292,6 @@ class _CompletedTasks extends State<CompletedTasks> {
                         updatedSolutions,
                         check,
                       );
-                      // Fetch images again to update the UI
-                      // await _fetchImagesFromS3();
                     },
                     child: const Text('Update previous solution'),
                   ),
@@ -459,7 +395,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                                     if (snapshot.hasData) {
                                       return Text(
                                         snapshot.data!,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16.0,
                                           color: Colors.black87,
@@ -468,7 +404,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                                     } else if (snapshot.hasError) {
                                       return Text(
                                         'Error: ${snapshot.error}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.red,
                                         ),
                                       );

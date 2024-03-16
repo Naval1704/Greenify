@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'dart:io';
+import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 
 final TextEditingController leafProblemController = TextEditingController();
 final TextEditingController leafNameController = TextEditingController();
@@ -33,12 +35,36 @@ class _CropDoctorState extends State<CropDoctor> {
   String cropName = '';
   List<String> urls = [];
 
+  List<String> problemOptions = [];
+
   Map<String, dynamic>? get async => null;
 
   @override
   void initState() {
     super.initState();
     _fetchImagesFromS3();
+    _loadProblemsFromCSV();
+  }
+
+  // Method to load problems from CSV
+  Future<void> _loadProblemsFromCSV() async {
+    try {
+      // Load CSV file from assets (you need to place your CSV file in the assets folder)
+      String csvData = await rootBundle.loadString('assets/problems.csv');
+      // Parse CSV data
+      List<List<dynamic>> rows = const CsvToListConverter().convert(csvData);
+      // Extract problems from CSV rows
+      List<String> problems = [];
+      for (var row in rows) {
+        problems
+            .add(row[1].toString()); // Assuming problem is in the second column
+      }
+      setState(() {
+        problemOptions = problems;
+      });
+    } catch (e) {
+      print('Error loading problems from CSV: $e');
+    }
   }
 
   Future<void> _uploadFile() async {
@@ -130,69 +156,127 @@ class _CropDoctorState extends State<CropDoctor> {
       solutionController.text,
       false,
     );
-
-    if (_formKey.currentState!.validate()) {
-      leafNameController.clear();
-      leafProblemController.clear();
-      // Close the dialog or navigate away as needed
-    }
+    leafNameController.clear();
+    leafProblemController.clear();
   }
 
   Future<bool?> _showLeafFormDialog(File imageFile) async {
-    return showDialog<bool?>(
+    String? selectedProblem;
+    bool? formSubmitted = await showDialog<bool?>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Enter Leaf Data'),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: leafNameController,
-                decoration: const InputDecoration(labelText: 'Leaf Name'),
-                onChanged: (value) {
-                  formData.leafName = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Leaf Name is required';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: leafProblemController,
-                decoration: const InputDecoration(labelText: 'Leaf Problem'),
-                onChanged: (value) {
-                  formData.leafProblem = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Leaf Name is required';
-                  }
-                  return null;
-                },
-              ),
-            ],
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Enter Leaf Data',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20.0),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: leafNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Leaf Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          formData.leafName = value;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Leaf Name is required';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      DropdownButtonFormField<String>(
+                        value: selectedProblem,
+                        hint: Text('Select Problem'),
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedProblem = value;
+                          });
+                        },
+                        items: [
+                          ...problemOptions
+                              .map((String problem) => DropdownMenuItem<String>(
+                                    value: problem,
+                                    child: Text(problem),
+                                  )),
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Select Problem',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      if (selectedProblem == null) SizedBox(height: 10),
+                      if (selectedProblem == null)
+                        TextFormField(
+                          controller: leafProblemController,
+                          decoration: InputDecoration(
+                            labelText: 'Enter Custom Problem',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            selectedProblem = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Custom Problem is required';
+                            }
+                            return null;
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        leafNameController.clear();
+                        leafProblemController.clear();
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
+                      child: Text('Submit'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(false); // Form canceled
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop(true); // Form submitted
-            },
-            child: const Text('Submit'),
-          ),
-        ],
       ),
     );
+
+    return formSubmitted;
   }
 
   Future<void> downloadFileMobile(String key) async {
@@ -253,16 +337,30 @@ class _CropDoctorState extends State<CropDoctor> {
     required StorageAccessLevel accessLevel,
   }) async {
     try {
+      // Remove file from AWS storage
       await Amplify.Storage.remove(
         key: key,
         options: StorageRemoveOptions(accessLevel: accessLevel),
       ).result;
+
+      // Remove corresponding URL and key from lists
       setState(() {
-        imageUrl = '';
+        if (imageKeys.contains(key)) {
+          imageKeys.remove(key);
+        }
+        // Assuming urls list contains corresponding URLs for imageKeys
+        urls.removeWhere((url) => url.contains(key));
       });
+
+      // Delete corresponding data from database
+      List<String> nameParts = key.split('.');
+      String uniqueKey = nameParts[0];
+      await MongoDatabase.deleteLeafData(uniqueKey);
+
+      // Fetch images again to update the UI
       await _fetchImagesFromS3();
-    } on StorageException catch (e) {
-      _logger.debug('Delete error - ${e.message}');
+    } catch (e) {
+      _logger.debug('Delete error: $e');
     }
   }
 
