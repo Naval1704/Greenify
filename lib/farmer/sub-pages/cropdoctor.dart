@@ -211,7 +211,7 @@ class _CropDoctorState extends State<CropDoctor> {
                         hint: Text('Select Problem'),
                         onChanged: (String? value) {
                           setState(() {
-                            selectedProblem = value;
+                            leafProblemController.text = value!;
                           });
                         },
                         items: [
@@ -226,24 +226,17 @@ class _CropDoctorState extends State<CropDoctor> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      if (selectedProblem == null) SizedBox(height: 10),
-                      if (selectedProblem == null)
-                        TextFormField(
-                          controller: leafProblemController,
-                          decoration: InputDecoration(
-                            labelText: 'Enter Custom Problem',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (value) {
-                            selectedProblem = value;
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Custom Problem is required';
-                            }
-                            return null;
-                          },
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: leafProblemController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Custom Problem',
+                          border: OutlineInputBorder(),
                         ),
+                        onChanged: (value) {
+                          leafProblemController.text = value;
+                        },
+                      ),
                     ],
                   ),
                 ),
