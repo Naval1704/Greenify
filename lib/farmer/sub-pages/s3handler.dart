@@ -25,7 +25,7 @@ class _S3Handler extends State<S3Handler> {
 
   ///
   /// Upload a given file from Local storage to AWS S3. The File can have any of
-  /// Guest/Private/Protected access levels.
+  /// Guest/protected/Protected access levels.
   ///
   Future<void> _uploadFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -63,7 +63,7 @@ class _S3Handler extends State<S3Handler> {
     try {
       final result = await Amplify.Storage.list(
         options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.protected,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;

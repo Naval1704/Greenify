@@ -120,6 +120,16 @@ class _CropDoctorState extends State<CropDoctor> {
   Future<void> _processImageFile(File imageFile) async {
     // Open the form to enter leaf name and problem
     bool? formSubmitted = await _showLeafFormDialog(imageFile);
+    String key = '';
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        key = element.value;
+      }
+    } on AuthException catch (e) {
+      key = '';
+      safePrint('Error fetching user attributes: ${e.message}');
+    }
 
     // Check if the form was submitted before processing the image file
     if (formSubmitted == null || !formSubmitted) {
@@ -129,15 +139,18 @@ class _CropDoctorState extends State<CropDoctor> {
 
     // Generate a unique identifier using the current timestamp
     String uniqueIdentifier = DateTime.now().microsecondsSinceEpoch.toString();
+    String itm = key.split('.').first +
+        '/'
+            '$uniqueIdentifier.${imageFile.path.split('.').last}';
     const options = StorageUploadFileOptions(
-      accessLevel: StorageAccessLevel.private,
+      accessLevel: StorageAccessLevel.guest,
     );
 
     // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
         localFile: AWSFile.fromPath(imageFile.path),
-        key: '$uniqueIdentifier.${imageFile.path.split('.').last}',
+        key: itm,
         options: options,
       ).result;
 
@@ -150,7 +163,7 @@ class _CropDoctorState extends State<CropDoctor> {
 
     // Call the function to insert data when the button is pressed
     await MongoDatabase.insertLeafData(
-      uniqueIdentifier.toString(),
+      itm.split('.').first,
       leafProblemController.text,
       leafNameController.text,
       solutionController.text,
@@ -365,7 +378,7 @@ class _CropDoctorState extends State<CropDoctor> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -383,36 +396,55 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   Future<void> _fetchImagesFromS3() async {
+    String userId = '';
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        userId = element.value;
+      }
+    } on AuthException catch (e) {
+      userId = '';
+      safePrint('Error fetching user attributes: ${e.message}');
+    }
+
     try {
       final result = await Amplify.Storage.list(
         options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
+
       setState(() {
         list = result.items;
         imageKeys.clear();
         urls.clear();
       });
+
       for (StorageItem item in list) {
-        if (item.key.endsWith('.jpg') ||
-            item.key.endsWith('.png') ||
-            item.key.endsWith('.jpeg') ||
-            item.key.endsWith('.webp')) {
-          bool checked =
-              await checkedOrnot(item.key); // Check the 'checked' status
-          if (!checked) {
-            setState(() {
-              imageKeys.add(item.key); // Add the key only if 'checked' is false
-            });
+        // Check if the item belongs to the folder corresponding to the user ID
+        if (item.key.startsWith(userId.split('.').first + '/')) {
+          // Check if the item is an image file based on its extension
+          if (item.key.endsWith('.jpg') ||
+              item.key.endsWith('.png') ||
+              item.key.endsWith('.jpeg') ||
+              item.key.endsWith('.webp')) {
+            bool checked =
+                await checkedOrnot(item.key); // Check the 'checked' status
+            if (!checked) {
+              setState(() {
+                imageKeys
+                    .add(item.key); // Add the key only if 'checked' is false
+              });
+            }
           }
         }
       }
+
       for (String i in imageKeys) {
         final imageUrl = await getUrl(
           key: i,
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.guest,
         );
         setState(() {
           urls.add(imageUrl);
@@ -481,6 +513,7 @@ class _CropDoctorState extends State<CropDoctor> {
     TextEditingController problemController =
         TextEditingController(text: leafProblem);
 
+    // ignore: use_build_context_synchronously
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -706,7 +739,7 @@ class _CropDoctorState extends State<CropDoctor> {
                                                       key: item.key,
                                                       accessLevel:
                                                           StorageAccessLevel
-                                                              .private,
+                                                              .guest,
                                                     );
                                                   }
                                                 },

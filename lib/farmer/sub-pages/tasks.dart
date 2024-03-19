@@ -27,7 +27,7 @@ class _TasksState extends State<Tasks> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.protected,
           pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -41,41 +41,60 @@ class _TasksState extends State<Tasks> {
     }
   }
 
-  Future<void> _fetchImagesFromS3() async {
+    Future<void> _fetchImagesFromS3() async {
+    String userId = '';
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        userId = element.value;
+      }
+    } on AuthException catch (e) {
+      userId = '';
+      safePrint('Error fetching user attributes: ${e.message}');
+    }
+
     try {
       final result = await Amplify.Storage.list(
         options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3ListPluginOptions.listAll(),
         ),
       ).result;
+
       setState(() {
         list = result.items;
         imageKeys.clear();
         urls.clear();
       });
+
       for (StorageItem item in list) {
-        if (item.key.endsWith('.jpg') ||
-            item.key.endsWith('.png') ||
-            item.key.endsWith('.jpeg') ||
-            item.key.endsWith('.webp')) {
-          bool checked = await checkedOrnot(item.key);
-          if (checked) {
-            setState(() {
-              imageKeys.add(item.key);
-            });
+        // Check if the item belongs to the folder corresponding to the user ID
+        if (item.key.startsWith(userId.split('.').first + '/')) {
+          // Check if the item is an image file based on its extension
+          if (item.key.endsWith('.jpg') ||
+              item.key.endsWith('.png') ||
+              item.key.endsWith('.jpeg') ||
+              item.key.endsWith('.webp')) {
+            bool checked =
+                await checkedOrnot(item.key); // Check the 'checked' status
+            if (!checked) {
+              setState(() {
+                imageKeys
+                    .add(item.key); // Add the key only if 'checked' is false
+              });
+            }
           }
         }
       }
+
       for (String i in imageKeys) {
-        bool checked = await checkedOrnot(i);
-        if (checked) {
-          final imageUrl =
-              await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-          setState(() {
-            urls.add(imageUrl);
-          });
-        }
+        final imageUrl = await getUrl(
+          key: i,
+          accessLevel: StorageAccessLevel.guest,
+        );
+        setState(() {
+          urls.add(imageUrl);
+        });
       }
     } catch (e) {
       print("Error fetching images: $e");

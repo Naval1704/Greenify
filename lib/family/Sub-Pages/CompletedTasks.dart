@@ -109,7 +109,7 @@ class _CompletedTasks extends State<CompletedTasks> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.private,
+          accessLevel: StorageAccessLevel.protected,
           pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -127,45 +127,65 @@ class _CompletedTasks extends State<CompletedTasks> {
   }
 
   Future<void> _fetchImagesFromS3() async {
-    try {
-      final result = await Amplify.Storage.list(
-        options: const StorageListOptions(
-          accessLevel: StorageAccessLevel.private,
-          pluginOptions: S3ListPluginOptions.listAll(),
-        ),
-      ).result;
-      setState(() {
-        list = result.items;
-        imageKeys.clear();
-        urls.clear();
-      });
-      for (StorageItem item in list) {
-        if (item.key.endsWith('.jpg') ||
-            item.key.endsWith('.png') ||
-            item.key.endsWith('.jpeg') ||
-            item.key.endsWith('.webp')) {
-          bool checked = await checkedOrnot(item.key);
-          if (checked) {
-            setState(() {
-              imageKeys.add(item.key);
-            });
+  try {
+    final result = await Amplify.Storage.list(
+      options: const StorageListOptions(
+        accessLevel: StorageAccessLevel.guest,
+        pluginOptions: S3ListPluginOptions.listAll(),
+      ),
+    ).result;
+
+    setState(() {
+      list = result.items;
+      imageKeys.clear();
+      urls.clear();
+    });
+
+    for (StorageItem folder in list) {
+      try {
+        final folderResult = await Amplify.Storage.list(
+          options: StorageListOptions(
+            accessLevel: StorageAccessLevel.guest,
+            
+          ),
+        ).result;
+        
+        // Iterate through the items inside the folder
+        for (StorageItem item in folderResult.items) {
+          // Check if the item is an image file based on its extension
+          if (item.key.endsWith('.jpg') ||
+              item.key.endsWith('.png') ||
+              item.key.endsWith('.jpeg') ||
+              item.key.endsWith('.webp')) {
+            bool checked = await checkedOrnot(item.key); // Check the 'checked' status
+            if (!checked) {
+              setState(() {
+                imageKeys.add(item.key); // Add the key only if 'checked' is false
+              });
+            }
           }
         }
+      } catch (e) {
+        print("Error fetching images from folder: $e");
       }
-      for (String i in imageKeys) {
-        bool checked = await checkedOrnot(i);
-        if (checked) {
-          final imageUrl =
-              await getUrl(key: i, accessLevel: StorageAccessLevel.private);
-          setState(() {
-            urls.add(imageUrl);
-          });
-        }
-      }
-    } catch (e) {
-      print("Error fetching images: $e");
     }
+
+    for (String i in imageKeys) {
+      final imageUrl = await getUrl(
+        key: i,
+        accessLevel: StorageAccessLevel.guest,
+      );
+      setState(() {
+        urls.add(imageUrl);
+      });
+    }
+  } catch (e) {
+    print("Error fetching images: $e");
   }
+}
+
+
+
 
   Future<bool> checkedOrnot(String imageKey) async {
     List<String> keyParts = imageKey.split('.');
