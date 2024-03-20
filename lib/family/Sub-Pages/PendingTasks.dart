@@ -135,44 +135,25 @@ class _PendingTasks extends State<PendingTasks> {
         ),
       ).result;
 
-      
-
       setState(() {
         list = result.items;
         imageKeys.clear();
         urls.clear();
       });
 
-      print('folder:{$list}');
-      for (StorageItem folder in list) {
-        
-        try {
-          final folderResult = await Amplify.Storage.list(
-            options: StorageListOptions(
-              accessLevel: StorageAccessLevel.guest,
-            ),
-          ).result;
-          
-          // Iterate through the items inside the folder
-          for (StorageItem item in folderResult.items) {
-            
-            // Check if the item is an image file based on its extension
-            if (item.key.endsWith('.jpg') ||
-                item.key.endsWith('.png') ||
-                item.key.endsWith('.jpeg') ||
-                item.key.endsWith('.webp')) {
-              bool checked =
-                  await checkedOrnot(item.key); // Check the 'checked' status
-              if (!checked) {
-                setState(() {
-                  imageKeys
-                      .add(item.key); // Add the key only if 'checked' is false
-                });
-              }
-            }
+      for (StorageItem item in result.items) {
+        // Check if the item is an image file based on its extension
+        if (item.key.endsWith('.jpg') ||
+            item.key.endsWith('.png') ||
+            item.key.endsWith('.jpeg') ||
+            item.key.endsWith('.webp')) {
+          bool checked =
+              await checkedOrnot(item.key); // Check the 'checked' status
+          if (!checked) {
+            setState(() {
+              imageKeys.add(item.key); // Add the key only if 'checked' is false
+            });
           }
-        } catch (e) {
-          print("Error fetching images from folder: $e");
         }
       }
 
@@ -182,7 +163,7 @@ class _PendingTasks extends State<PendingTasks> {
           accessLevel: StorageAccessLevel.guest,
         );
         setState(() {
-          urls.add(imageUrl);
+          urls.add(imageUrl); // Add the URL to the list
         });
       }
     } catch (e) {
@@ -357,10 +338,11 @@ class _PendingTasks extends State<PendingTasks> {
                       padding: const EdgeInsets.all(10.0),
                       itemCount: urls.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = list[index];
+                        final imageUrl = urls[index];
+                        final imageName = imageKeys[index];
 
                         return Hero(
-                          tag: 'image$index', // Unique tag for each image
+                          tag: 'image$index',
                           child: Card(
                             elevation: 5.0,
                             shape: RoundedRectangleBorder(
@@ -369,7 +351,7 @@ class _PendingTasks extends State<PendingTasks> {
                             child: InkWell(
                               onTap: () {
                                 _showImageDetailsDialog(
-                                    urls[index], imageKeys[index], index);
+                                    imageUrl, imageName, index);
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -382,7 +364,7 @@ class _PendingTasks extends State<PendingTasks> {
                                       child: Stack(
                                         children: [
                                           Image.network(
-                                            urls[index],
+                                            imageUrl,
                                             fit: BoxFit.cover,
                                             width: double.infinity,
                                           ),
@@ -393,11 +375,11 @@ class _PendingTasks extends State<PendingTasks> {
                                               color: Colors.transparent,
                                               child: InkWell(
                                                 onTap: () {
-                                                  // Handle download
-                                                  downloadFileMobile(item.key);
+                                                  downloadFileMobile(
+                                                      imageKeys[index]);
                                                 },
-                                                borderRadius: BorderRadius.circular(
-                                                    20.0), // Adjust the radius as needed
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
                                                 child: Container(
                                                   padding: EdgeInsets.all(8.0),
                                                   decoration: BoxDecoration(
@@ -407,8 +389,7 @@ class _PendingTasks extends State<PendingTasks> {
                                                   ),
                                                   child: const Icon(
                                                     Icons.download,
-                                                    color: Colors
-                                                        .blue, // Set the color of the icon
+                                                    color: Colors.blue,
                                                   ),
                                                 ),
                                               ),
@@ -422,8 +403,7 @@ class _PendingTasks extends State<PendingTasks> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: FutureBuilder<String>(
-                                      future:
-                                          _extractCropName(imageKeys[index]),
+                                      future: _extractCropName(imageName),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.done) {
