@@ -300,7 +300,7 @@ class _PendingTasks extends State<PendingTasks> {
                       // Fetch images again to update the UI
                       await _fetchImagesFromS3();
                     },
-                    child: const Text('Update Solutions'),
+                    child: const Text('Submit Solution'),
                   ),
                 ],
               ),
