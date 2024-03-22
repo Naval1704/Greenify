@@ -56,7 +56,9 @@ dependencies:
   permission_handler: ^11.0.1
   carousel_slider: ^4.0.0
   shimmer: ^2.0.0
+  razorpay_web: ^1.4.2
   mongo_dart: ^0.10.0
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +92,7 @@ flutter:
       - assets/agriculture.png
       - assets/watermark.png
       - assets/google.png
+      - assets/3d-hand-making-cashless-payment-from-smartphone.jpg
       - assets/meta.png
       - assets/problems.csv
       - assets/istockphoto-1151784210-612x612.jpg

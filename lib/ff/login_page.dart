@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height *
                   0.36, // Adjust the height as needed
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(
                         "assets/watermark.png"), // Replace with your pattern image
