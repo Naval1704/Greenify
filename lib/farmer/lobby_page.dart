@@ -33,7 +33,6 @@ Future<void> _handleSignout(BuildContext context) async {
     );
   } on AuthException catch (e) {
     print("Error signing out: ${e.message}");
-    // Handle error, show a message, or navigate to an error screen if needed
   }
 }
 

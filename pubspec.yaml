@@ -59,6 +59,7 @@ dependencies:
   razorpay_web: ^1.4.2
   mongo_dart: ^0.10.0
   fluttertoast: ^8.2.4
+  awesome_notifications: ^0.8.2
 
 dev_dependencies:
   flutter_test:

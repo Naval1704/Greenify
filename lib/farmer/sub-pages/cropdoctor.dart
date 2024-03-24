@@ -96,16 +96,16 @@ class _CropDoctorState extends State<CropDoctor> {
             child: Wrap(
               children: <Widget>[
                 ListTile(
-                  leading: Icon(Icons.camera),
-                  title: Text('Take a Photo'),
+                  leading: const Icon(Icons.camera),
+                  title: const Text('Take a Photo'),
                   onTap: () async {
                     Navigator.pop(context);
                     await _uploadFromCamera();
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_library),
-                  title: Text('Choose from Gallery'),
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Choose from Gallery'),
                   onTap: () async {
                     Navigator.pop(context);
                     await _uploadFromGallery();
@@ -122,14 +122,48 @@ class _CropDoctorState extends State<CropDoctor> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Daily Upload Limit Reached'),
-            content: Text('You have reached your daily limit of uploads.'),
+            title: const Text(
+              'Daily Upload Limit Reached',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 10),
+                Icon(
+                  Icons.warning,
+                  size: 50,
+                  color: Colors.orange,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Oops! You have reached your daily limit of uploads.',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Come back tomorrow to upload more images!',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.blue,
+                  ),
+                ),
               ),
             ],
           );
