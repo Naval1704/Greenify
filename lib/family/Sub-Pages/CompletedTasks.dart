@@ -109,7 +109,7 @@ class _CompletedTasks extends State<CompletedTasks> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.protected,
+          accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -127,65 +127,50 @@ class _CompletedTasks extends State<CompletedTasks> {
   }
 
   Future<void> _fetchImagesFromS3() async {
-  try {
-    final result = await Amplify.Storage.list(
-      options: const StorageListOptions(
-        accessLevel: StorageAccessLevel.guest,
-        pluginOptions: S3ListPluginOptions.listAll(),
-      ),
-    ).result;
+    try {
+      final result = await Amplify.Storage.list(
+        options: const StorageListOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3ListPluginOptions.listAll(),
+        ),
+      ).result;
 
-    setState(() {
-      list = result.items;
-      imageKeys.clear();
-      urls.clear();
-    });
+      setState(() {
+        list = result.items;
+        imageKeys.clear();
+        urls.clear();
+      });
 
-    for (StorageItem folder in list) {
-      try {
-        final folderResult = await Amplify.Storage.list(
-          options: StorageListOptions(
-            accessLevel: StorageAccessLevel.guest,
-            
-          ),
-        ).result;
-        
-        // Iterate through the items inside the folder
-        for (StorageItem item in folderResult.items) {
-          // Check if the item is an image file based on its extension
-          if (item.key.endsWith('.jpg') ||
-              item.key.endsWith('.png') ||
-              item.key.endsWith('.jpeg') ||
-              item.key.endsWith('.webp')) {
-            bool checked = await checkedOrnot(item.key); // Check the 'checked' status
-            if (!checked) {
-              setState(() {
-                imageKeys.add(item.key); // Add the key only if 'checked' is false
-              });
-            }
+      for (StorageItem item in result.items) {
+        // Check if the item is an image file based on its extension
+        if (item.key.endsWith('.jpg') ||
+            item.key.endsWith('.png') ||
+            item.key.endsWith('.jpeg') ||
+            item.key.endsWith('.webp')) {
+          bool checked =
+              await checkedOrnot(item.key); // Check the 'checked' status
+          if (checked) {
+            setState(() {
+              imageKeys.add(item.key); // Add the key only if 'checked' is false
+            });
           }
         }
-      } catch (e) {
-        print("Error fetching images from folder: $e");
       }
-    }
 
-    for (String i in imageKeys) {
-      final imageUrl = await getUrl(
-        key: i,
-        accessLevel: StorageAccessLevel.guest,
-      );
-      setState(() {
-        urls.add(imageUrl);
-      });
+      for (String i in imageKeys) {
+        final imageUrl = await getUrl(
+          key: i,
+          accessLevel: StorageAccessLevel.guest,
+        );
+        setState(() {
+          urls.add(imageUrl); // Add the URL to the list
+        });
+      }
+      print(imageKeys);
+    } catch (e) {
+      print("Error fetching images: $e");
     }
-  } catch (e) {
-    print("Error fetching images: $e");
   }
-}
-
-
-
 
   Future<bool> checkedOrnot(String imageKey) async {
     List<String> keyParts = imageKey.split('.');
@@ -343,7 +328,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                 padding: const EdgeInsets.all(10.0),
                 itemCount: urls.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final item = list[index];
+                  final item = imageKeys[index];
 
                   return Hero(
                     tag: 'image$index', // Unique tag for each image
@@ -380,7 +365,7 @@ class _CompletedTasks extends State<CompletedTasks> {
                                         child: InkWell(
                                           onTap: () {
                                             // Handle download
-                                            downloadFileMobile(item.key);
+                                            downloadFileMobile(item);
                                           },
                                           borderRadius: BorderRadius.circular(
                                               20.0), // Adjust the radius as needed

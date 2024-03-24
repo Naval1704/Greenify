@@ -8,6 +8,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 final TextEditingController leafProblemController = TextEditingController();
 final TextEditingController leafNameController = TextEditingController();
@@ -30,6 +31,8 @@ class _CropDoctorState extends State<CropDoctor> {
   List<StorageItem> list = [];
   var imageUrl = '';
   FormData formData = FormData();
+
+  Map<String, int> dateCountMap = {};
 
   List<String> imageKeys = [];
   String cropName = '';
@@ -68,33 +71,71 @@ class _CropDoctorState extends State<CropDoctor> {
   }
 
   Future<void> _uploadFile() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.camera),
-                title: Text('Take a Photo'),
-                onTap: () async {
+    String userId = '';
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        userId = element.value;
+      }
+    } on AuthException catch (e) {
+      userId = '';
+      safePrint('Error fetching user attributes: ${e.message}');
+    }
+
+    String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    int count = await MongoDatabase.getImageCountByUserAndDate(
+        userId.split('.').first, date);
+    // print(count);
+    // print(userId.split('.').first);
+    if (count < 3) {
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.camera),
+                  title: Text('Take a Photo'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _uploadFromCamera();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.photo_library),
+                  title: Text('Choose from Gallery'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _uploadFromGallery();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      // Show message that daily limit of uploads is reached
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Daily Upload Limit Reached'),
+            content: Text('You have reached your daily limit of uploads.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
                   Navigator.pop(context);
-                  await _uploadFromCamera();
                 },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await _uploadFromGallery();
-                },
+                child: Text('OK'),
               ),
             ],
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
 
   Future<void> _uploadFromCamera() async {
@@ -146,6 +187,8 @@ class _CropDoctorState extends State<CropDoctor> {
       accessLevel: StorageAccessLevel.guest,
     );
 
+    String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
     // After the form is submitted, upload the file
     try {
       await Amplify.Storage.uploadFile(
@@ -168,6 +211,7 @@ class _CropDoctorState extends State<CropDoctor> {
       leafNameController.text,
       solutionController.text,
       false,
+      date,
     );
     leafNameController.clear();
     leafProblemController.clear();
@@ -349,19 +393,7 @@ class _CropDoctorState extends State<CropDoctor> {
         options: StorageRemoveOptions(accessLevel: accessLevel),
       ).result;
 
-      // Remove corresponding URL and key from lists
-      setState(() {
-        if (imageKeys.contains(key)) {
-          imageKeys.remove(key);
-        }
-        // Assuming urls list contains corresponding URLs for imageKeys
-        urls.removeWhere((url) => url.contains(key));
-      });
-
-      // Delete corresponding data from database
-      List<String> nameParts = key.split('.');
-      String uniqueKey = nameParts[0];
-      await MongoDatabase.deleteLeafData(uniqueKey);
+      await MongoDatabase.deleteLeafData(key);
 
       // Fetch images again to update the UI
       await _fetchImagesFromS3();
@@ -450,6 +482,7 @@ class _CropDoctorState extends State<CropDoctor> {
           urls.add(imageUrl);
         });
       }
+      print(imageKeys);
     } catch (e) {
       print("Error fetching images: $e");
     }
@@ -627,7 +660,7 @@ class _CropDoctorState extends State<CropDoctor> {
                       padding: const EdgeInsets.all(10.0),
                       itemCount: urls.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = list[index];
+                        final item = imageKeys[index];
 
                         // Ensure that the index is within bounds before accessing urls
                         if (index < urls.length) {
@@ -664,7 +697,8 @@ class _CropDoctorState extends State<CropDoctor> {
                                               color: Colors.transparent,
                                               child: InkWell(
                                                 onTap: () {
-                                                  downloadFileMobile(item.key);
+                                                  downloadFileMobile(item);
+                                                  // print(urls[index]);
                                                 },
                                                 borderRadius:
                                                     BorderRadius.circular(20.0),
@@ -726,17 +760,13 @@ class _CropDoctorState extends State<CropDoctor> {
                                                   );
 
                                                   if (confirmDelete == true) {
-                                                    List<String> nameParts =
-                                                        item.key
-                                                            .toString()
-                                                            .split('.');
-                                                    String uniqueKey =
-                                                        nameParts[0];
+                                                    print(item);
                                                     await MongoDatabase
-                                                        .deleteLeafData(
-                                                            uniqueKey);
+                                                        .deleteLeafData(item
+                                                            .split('.')
+                                                            .first);
                                                     removeFile(
-                                                      key: item.key,
+                                                      key: item,
                                                       accessLevel:
                                                           StorageAccessLevel
                                                               .guest,

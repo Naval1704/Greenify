@@ -1,3 +1,4 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_web/razorpay_web.dart';
 
@@ -11,6 +12,7 @@ class PaymentGateway extends StatefulWidget {
 class _PaymentGatewayState extends State<PaymentGateway> {
   late final Razorpay _razorpay;
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -55,7 +57,7 @@ class _PaymentGatewayState extends State<PaymentGateway> {
     ));
   }
 
-  void _openCheckout() {
+  Future<void> _openCheckout() async {
     if (_amountController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please enter amount'),
@@ -73,6 +75,26 @@ class _PaymentGatewayState extends State<PaymentGateway> {
       return;
     }
 
+    if (_phoneController.text.isEmpty) {
+      // Added phone number validation
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please enter phone number'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
+    String userId = '';
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        userId = element.value;
+      }
+    } on AuthException catch (e) {
+      userId = '';
+      safePrint('Error fetching user attributes: ${e.message}');
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -85,8 +107,8 @@ class _PaymentGatewayState extends State<PaymentGateway> {
       "timeout": "180",
       "currency": "INR",
       "prefill": {
-        "contact": "11111111111",
-        "email": "test@abc.com",
+        "contact": _phoneController.text,
+        "email": userId,
       }
     };
 
@@ -130,10 +152,10 @@ class _PaymentGatewayState extends State<PaymentGateway> {
             Container(
               alignment: Alignment.centerLeft, // Align the text to the left
               margin: const EdgeInsets.only(
-                  bottom: 10.0,
+                  bottom: 5.0,
                   left: 5.0), // Add margin to separate it from the amount field
               child: const Text(
-                'Amount in Rupees',
+                'Amount in rupees',
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.black87,
@@ -156,6 +178,53 @@ class _PaymentGatewayState extends State<PaymentGateway> {
                     .currency_rupee_outlined), // Rupee symbol as prefix icon
                 hintText: "Enter amount (e.g., 100.00)",
                 labelText: "Enter amount",
+                labelStyle: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: const BorderSide(color: Colors.redAccent),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: const BorderSide(color: Colors.redAccent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide:
+                      const BorderSide(color: Colors.redAccent, width: 2.0),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 25), // Add some space between the fields
+
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(bottom: 5.0, left: 5.0),
+              child: const Text(
+                'Phone Number',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              style: const TextStyle(
+                fontSize: 18.0,
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.phone),
+                hintText: "Enter phone number",
+                labelText: "Phone number",
                 labelStyle: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,

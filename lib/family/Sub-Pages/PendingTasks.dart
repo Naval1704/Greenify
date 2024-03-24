@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:greenify/mongo/mongodb.dart';
 
 final TextEditingController solutionsController = TextEditingController();
@@ -377,6 +376,7 @@ class _PendingTasks extends State<PendingTasks> {
                                                 onTap: () {
                                                   downloadFileMobile(
                                                       imageKeys[index]);
+                                                  print(imageKeys[index]);
                                                 },
                                                 borderRadius:
                                                     BorderRadius.circular(20.0),

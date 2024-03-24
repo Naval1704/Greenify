@@ -14,13 +14,14 @@ class MongoDatabase {
   }
 
   static Future<void> insertLeafData(String uniqueKey, String leafProblem,
-      String leafName, String solution, bool checked) async {
+      String leafName, String solution, bool checked, String date) async {
     await collection.insertOne({
       '_id': uniqueKey,
       'leafproblem': leafProblem,
       'leafname': leafName,
       'solution': solution,
       'checked': checked,
+      'date': date,
     });
     print(await collection.find().toList());
   }
@@ -73,6 +74,15 @@ class MongoDatabase {
     }
   }
 
+  static Future<int> getImageCountByUserAndDate(
+      String uniqueKey, String date) async {
+    final regex = RegExp('^$uniqueKey');
+    final count = await collection.count(
+      where.eq('_id', regex).eq('date', date),
+    );
+    return count;
+  }
+
   static Future<Map<String, dynamic>?> fetchLeafDataById(
       String uniqueKey) async {
     return await collection.findOne(where.eq('_id', uniqueKey));
@@ -89,6 +99,7 @@ class MongoDatabase {
         'leafproblem': leafData['leafproblem'],
         'solution': leafData['solution'],
         'checked': leafData['checked'],
+        'date': leafData['date'],
       };
     } else {
       return null;

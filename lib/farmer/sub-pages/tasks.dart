@@ -27,7 +27,7 @@ class _TasksState extends State<Tasks> {
       final result = await Amplify.Storage.getUrl(
         key: key,
         options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.protected,
+          accessLevel: StorageAccessLevel.guest,
           pluginOptions: S3GetUrlPluginOptions(
             validateObjectExistence: true,
             expiresIn: Duration(minutes: 1),
@@ -41,7 +41,7 @@ class _TasksState extends State<Tasks> {
     }
   }
 
-    Future<void> _fetchImagesFromS3() async {
+  Future<void> _fetchImagesFromS3() async {
     String userId = '';
     try {
       final result = await Amplify.Auth.fetchUserAttributes();
@@ -77,7 +77,7 @@ class _TasksState extends State<Tasks> {
               item.key.endsWith('.webp')) {
             bool checked =
                 await checkedOrnot(item.key); // Check the 'checked' status
-            if (!checked) {
+            if (checked) {
               setState(() {
                 imageKeys
                     .add(item.key); // Add the key only if 'checked' is false
