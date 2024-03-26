@@ -10,7 +10,8 @@ class FeedbackForm extends StatefulWidget {
 
 class _FeedbackFormState extends State<FeedbackForm> {
   final TextEditingController _feedbackController = TextEditingController();
-  String key = '';
+  String userId = '';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -21,22 +22,28 @@ class _FeedbackFormState extends State<FeedbackForm> {
   Future<void> _fetchUserId() async {
     try {
       final result = await Amplify.Auth.fetchUserAttributes();
-      for (final element in result) {
-        key = element.value;
+      final subAttribute = result.firstWhere(
+        (attribute) => attribute.userAttributeKey == 'sub',
+      );
+      if (subAttribute != null) {
+        setState(() {
+          userId = subAttribute.value;
+        });
       }
-      setState(() {});
     } on AuthException catch (e) {
       print('Error fetching user attributes: ${e.message}');
     }
-    print('KEYYYY: $key');
   }
 
-  void _submitFeedback() async {
+  Future<void> _submitFeedback() async {
+    setState(() {
+      _isLoading = true;
+    });
     String feedback = _feedbackController.text.trim();
     if (feedback.isNotEmpty) {
-      // Fetch user ID
-      if (key.isNotEmpty) {
-        await MongoDatabase3.insertFeedbackData(key, feedback);
+      // Ensure user ID is fetched
+      if (userId.isNotEmpty) {
+        await MongoDatabase3.insertFeedbackData(userId, feedback);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Feedback submitted!')),
         );
@@ -50,38 +57,92 @@ class _FeedbackFormState extends State<FeedbackForm> {
         SnackBar(content: Text('Please enter your feedback!')),
       );
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Feedback Form'),
+        title: Text(
+          'Feedback Form',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.redAccent,
+        elevation: 0, // Remove app bar elevation
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Your Feedback:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _feedbackController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: 'Enter your feedback here...',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Your Feedback:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-            SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _submitFeedback,
-              child: Text('Submit Feedback'),
-            ),
-          ],
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _feedbackController,
+                  maxLines: null, // Allow unlimited lines
+                  decoration: InputDecoration(
+                    hintText: 'Enter your feedback here...',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.redAccent,
+                ),
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : TextButton.icon(
+                        onPressed: _submitFeedback,
+                        icon: Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          'Submit Feedback',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

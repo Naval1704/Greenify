@@ -92,6 +92,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
       - assets/agriculture.png
       - assets/watermark.png
+      - assets/userImage.jpg
       - assets/google.png
       - assets/3d-hand-making-cashless-payment-from-smartphone.jpg
       - assets/meta.png

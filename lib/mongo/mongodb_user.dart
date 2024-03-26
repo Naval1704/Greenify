@@ -25,8 +25,39 @@ class MongoDatabase2 {
     print("ADDED DATA");
   }
 
-  static Future<Map<String, dynamic>?> fetchLeafDataById(
+  static Future<void> updateUserData(
+      String uniqueKey, String username, String phone) async {
+    try {
+      final response = await collection.update(
+        // Use uniqueKey as the filter criteria
+        where.eq('_id', uniqueKey),
+        modify
+            .set('username', username) // Update solution field
+            .set('phone', phone), // Update checked field
+      );
+    } catch (e) {
+      // Handle update error
+      print('Update error: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>?> fetchUserDataById(
       String uniqueKey) async {
     return await collection.findOne(where.eq('_id', uniqueKey));
   }
+
+  // static Future<Map<String, dynamic>?> fetchUserNameAndPhoneById(
+  //     String uniqueKey) async {
+  //   Map<String, dynamic>? userData = await fetchUserDataById(uniqueKey);
+  //
+  //   if (userData != null) {
+  //     return {
+  //       '_id': userData['_id'],
+  //       'username': userData['username'],
+  //       'phone': userData['phone'],
+  //     };
+  //   } else {
+  //     return null;
+  //   }
+  // }
 }

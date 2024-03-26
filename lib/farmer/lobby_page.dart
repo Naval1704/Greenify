@@ -8,6 +8,7 @@ import 'package:greenify/farmer/sub-pages/profilecard.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
+import 'package:greenify/mongo/mongodb_user.dart';
 
 class _LobbyPageState extends StatelessWidget {
   const _LobbyPageState({super.key});
@@ -45,6 +46,30 @@ class _LobbyPage extends State<LobbyPage> {
   }
 
   int currentPageIndex = 0;
+  String key = '';
+  var userData;
+  String userName = '';
+
+  void initState() {
+    super.initState();
+    _fetchUserId();
+  }
+
+  Future<void> _fetchUserId() async {
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      for (final element in result) {
+        key = element.value;
+      }
+      setState(() {});
+    } on AuthException catch (e) {
+      print('Error fetching user attributes: ${e.message}');
+    }
+    print('KEYYYY: $key');
+
+    userData = await MongoDatabase2.fetchUserDataById(key);
+    userName = userData['username'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +169,7 @@ class _LobbyPage extends State<LobbyPage> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                final user = snapshot.data!;
-                final signInDetails = user.signInDetails;
-                final username =
-                    user.signInDetails.toJson()['username'].toString();
-
+                // _fetchUserId();
                 return ListView(
                   children: <Widget>[
                     DrawerHeader(
@@ -158,22 +179,15 @@ class _LobbyPage extends State<LobbyPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'User Details:',
-                            style: TextStyle(
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              'Hello, $userName',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'mail ID: $username',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                              ),
                             ),
                           ),
                         ],
@@ -192,7 +206,7 @@ class _LobbyPage extends State<LobbyPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileCard(),
+                            builder: (context) => ProfilePage(),
                           ),
                         );
                       },
@@ -226,29 +240,28 @@ class _LobbyPage extends State<LobbyPage> {
                         _handleSignout(context);
                       },
                     ),
-                     ListTile(
-                  leading: Icon(Icons.feedback_rounded),
-                  title: const Text(
-                    "Feedback",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FeedbackForm(), // Navigate to your feedback form page
+                    ListTile(
+                      leading: Icon(Icons.feedback_rounded),
+                      title: const Text(
+                        "Feedback",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
-                    );
-                  },
-                )
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                FeedbackForm(), // Navigate to your feedback form page
+                          ),
+                        );
+                      },
+                    )
                   ],
                 );
                 // ignore: dead_code
-               
               } else {
                 // Handle loading state or error
                 return CircularProgressIndicator();
