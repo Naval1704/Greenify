@@ -22,14 +22,10 @@ class _FeedbackFormState extends State<FeedbackForm> {
   Future<void> _fetchUserId() async {
     try {
       final result = await Amplify.Auth.fetchUserAttributes();
-      final subAttribute = result.firstWhere(
-        (attribute) => attribute.userAttributeKey == 'sub',
-      );
-      if (subAttribute != null) {
-        setState(() {
-          userId = subAttribute.value;
-        });
+      for (final element in result) {
+        userId = element.value;
       }
+      setState(() {});
     } on AuthException catch (e) {
       print('Error fetching user attributes: ${e.message}');
     }

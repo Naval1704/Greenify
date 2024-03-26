@@ -1,7 +1,7 @@
-import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:greenify/mongo/mongodb_user.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_core/amplify_core.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,7 +10,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String key = '';
-  bool _isLoading = false;
+  String email = '';
+  String group = '';
   var userData;
   TextEditingController usernameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -25,21 +26,18 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final result = await Amplify.Auth.fetchUserAttributes();
       for (final element in result) {
-        if (element.userAttributeKey == 'sub') {
-          key = element.value;
-          break;
-        }
+        key = element.value;
       }
       setState(() {});
     } on AuthException catch (e) {
       print('Error fetching user attributes: ${e.message}');
     }
+    print('KEYYYY: $key');
 
     userData = await MongoDatabase2.fetchUserDataById(key);
-    if (userData != null) {
-      usernameController.text = userData['username'];
-      phoneNumberController.text = userData['phone'];
-    }
+    usernameController.text = userData['username'];
+    phoneNumberController.text = userData['phone'];
+    group = userData['group'];
   }
 
   Future<void> _updateUserData() async {
@@ -52,7 +50,6 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       userData['username'] = usernameController.text;
       userData['phone'] = phoneNumberController.text;
-      bool _isLoading = true;
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Profile updated successfully')),
@@ -63,8 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Your Profile',
+        title: const Text(
+          'Profile',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -102,40 +99,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       _buildTextFieldWithTitle(
                           'Phone Number:', phoneNumberController),
                       SizedBox(height: 20),
-                      _buildReadOnlyFieldWithTitle(
-                          'Email:', userData != null ? userData['email'] : ""),
+                      _buildReadOnlyFieldWithTitle('Email:', key),
                       SizedBox(height: 20),
-                      _buildReadOnlyFieldWithTitle(
-                          'Group:', userData != null ? userData['group'] : ""),
+                      _buildReadOnlyFieldWithTitle('Group:', group),
                       SizedBox(height: 20),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(18),
                           color: Colors.redAccent,
                         ),
-                        child: _isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            : TextButton.icon(
-                                onPressed: _updateUserData,
-                                icon: const Icon(
-                                  Icons.update,
-                                  color: Colors.white,
-                                ),
-                                label: const Text(
-                                  'Update details',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                        child: TextButton.icon(
+                          onPressed: _updateUserData,
+                          icon: const Icon(
+                            Icons.update,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Update details',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
