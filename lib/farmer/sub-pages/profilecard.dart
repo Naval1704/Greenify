@@ -25,7 +25,10 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final result = await Amplify.Auth.fetchUserAttributes();
       for (final element in result) {
-        key = element.value;
+        if (element.userAttributeKey == 'sub') {
+          key = element.value;
+          break;
+        }
       }
       setState(() {});
     } on AuthException catch (e) {
@@ -33,8 +36,10 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     userData = await MongoDatabase2.fetchUserDataById(key);
-    usernameController.text = userData['username'];
-    phoneNumberController.text = userData['phone'];
+    if (userData != null) {
+      usernameController.text = userData['username'];
+      phoneNumberController.text = userData['phone'];
+    }
   }
 
   Future<void> _updateUserData() async {
