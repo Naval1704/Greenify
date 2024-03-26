@@ -119,24 +119,16 @@ class _PaymentGatewayState extends State<PaymentGateway> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Text(
-              'Payments',
-              style: TextStyle(
-                color:
-                    Colors.redAccent, // Set the text color to a prominent color
-                fontSize: 23, // Increase the font size for emphasis
-                fontWeight: FontWeight.bold,
-                fontFamily:
-                    'Aclonica', // Use a specific font (ensure it's available)
-                letterSpacing:
-                    1.2, // Add a slight letter spacing for better readability
-              ),
-            ),
-          ],
+        title: const Text(
+          'Payments',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        centerTitle: true,
+        backgroundColor: Colors.redAccent,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

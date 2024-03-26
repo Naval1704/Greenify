@@ -35,13 +35,10 @@ class _FeedbackFormState extends State<FeedbackForm> {
     }
   }
 
-  Future<void> _submitFeedback() async {
-    setState(() {
-      _isLoading = true;
-    });
+  void _submitFeedback() async {
     String feedback = _feedbackController.text.trim();
     if (feedback.isNotEmpty) {
-      // Ensure user ID is fetched
+      // Fetch user ID
       if (userId.isNotEmpty) {
         await MongoDatabase3.insertFeedbackData(userId, feedback);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -57,16 +54,13 @@ class _FeedbackFormState extends State<FeedbackForm> {
         SnackBar(content: Text('Please enter your feedback!')),
       );
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Feedback Form',
           style: TextStyle(
             color: Colors.white,
@@ -83,7 +77,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Your Feedback:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -105,7 +99,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                 child: TextField(
                   controller: _feedbackController,
                   maxLines: null, // Allow unlimited lines
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Enter your feedback here...',
                     border: InputBorder.none,
                   ),
@@ -119,7 +113,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                   color: Colors.redAccent,
                 ),
                 child: _isLoading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Colors.white,
@@ -128,11 +122,11 @@ class _FeedbackFormState extends State<FeedbackForm> {
                       )
                     : TextButton.icon(
                         onPressed: _submitFeedback,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.send,
                           color: Colors.white,
                         ),
-                        label: Text(
+                        label: const Text(
                           'Submit Feedback',
                           style: TextStyle(
                             color: Colors.white,

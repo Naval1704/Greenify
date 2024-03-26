@@ -6,16 +6,17 @@ class MongoDatabase3 {
   static late DbCollection collection;
 
   static Future<void> connect() async {
-    db = await Db.create(MONGO_URL);
-    await db!.open();
-    var status = db!.serverStatus();
-    print(status);
+    if (db == null) {
+      db = await Db.create(MONGO_URL);
+      await db!.open();
+      print('Connected to MongoDB');
+    }
     collection = db!.collection(COLLECTION_FORM);
   }
 
   static Future<void> insertFeedbackData(String userId, String feedback) async {
     await collection.insertOne({
-      'id':userId,
+      'id': userId,
       'userId': userId,
       'feedback': feedback,
       'timestamp': DateTime.now(),
