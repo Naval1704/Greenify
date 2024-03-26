@@ -7,13 +7,18 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/aws/amplifyconfiguration.dart';
 import 'package:greenify/ff/login_page.dart';
 import 'package:greenify/ff/start_page.dart';
-import 'mongo/mongodb.dart';
+import 'package:greenify/form.dart';
+import 'package:greenify/mongo/mongodb_feedback.dart';
+import 'package:greenify/mongo/mongodb_user.dart';
+import 'mongo/mongodb_leaf.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
   await MongoDatabase.connect();
+  await MongoDatabase2.connect();
+  await MongoDatabase3.connect();
   runApp(const MyApp());
 }
 
@@ -72,6 +77,10 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => Authenticator(
               child:
                   const LoginPage(), // Map the login route to the LoginPage wrapped in Authenticator
+            ),
+        '/form': (context) => Authenticator(
+              child:
+                  const UserDetailsForm(), // Map the login route to the LoginPage wrapped in Authenticator
             ),
         // Add more routes as needed
       },

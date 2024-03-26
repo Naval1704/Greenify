@@ -3,7 +3,7 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'package:greenify/mongo/mongodb.dart';
+import 'package:greenify/mongo/mongodb_leaf.dart';
 
 final TextEditingController solutionsController = TextEditingController();
 final AmplifyLogger _logger = AmplifyLogger('CropDoctorApp');

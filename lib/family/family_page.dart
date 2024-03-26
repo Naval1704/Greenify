@@ -2,6 +2,7 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:greenify/form.dart';
 import 'ExpertPage.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:greenify/amplifyconfiguration.dart';
@@ -33,7 +34,7 @@ class _FamilyPageState extends State<FamilyPage> {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const ExpertPage(),
+        builder: (context, state) => UserDetailsForm(),
       ),
     ],
   );

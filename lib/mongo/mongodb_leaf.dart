@@ -10,7 +10,7 @@ class MongoDatabase {
     await db!.open();
     var status = db!.serverStatus();
     print(status);
-    collection = db!.collection(COLLECTION);
+    collection = db!.collection(COLLECTION_LEAF);
   }
 
   static Future<void> insertLeafData(String uniqueKey, String leafProblem,

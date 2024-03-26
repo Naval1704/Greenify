@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:greenify/farmer/lobby_page.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:greenify/amplifyconfiguration.dart';
+import 'package:greenify/form.dart';
 import 'lobby_page.dart';
 
 class FarmerPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _FarmerPageState extends State<FarmerPage> {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => LobbyPage(),
+        builder: (context, state) => UserDetailsForm(),
       ),
     ],
   );

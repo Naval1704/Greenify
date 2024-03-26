@@ -1,8 +1,10 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:greenify/farmer/sub-pages/cropdoctor.dart';
+import 'package:greenify/farmer/sub-pages/feedbackform.dart';
 import 'package:greenify/farmer/sub-pages/homepage.dart';
 import 'package:greenify/farmer/sub-pages/payement_gateway.dart';
+import 'package:greenify/farmer/sub-pages/profilecard.dart';
 import 'package:greenify/farmer/sub-pages/tasks.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:greenify/farmer/farmer_page.dart';
@@ -186,7 +188,14 @@ class _LobbyPage extends State<LobbyPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileCard(),
+                          ),
+                        );
+                      },
                     ),
                     ListTile(
                       leading: Icon(Icons.payment_outlined),
@@ -217,8 +226,29 @@ class _LobbyPage extends State<LobbyPage> {
                         _handleSignout(context);
                       },
                     ),
+                     ListTile(
+                  leading: Icon(Icons.feedback_rounded),
+                  title: const Text(
+                    "Feedback",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FeedbackForm(), // Navigate to your feedback form page
+                      ),
+                    );
+                  },
+                )
                   ],
                 );
+                // ignore: dead_code
+               
               } else {
                 // Handle loading state or error
                 return CircularProgressIndicator();
